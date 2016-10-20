@@ -35,7 +35,8 @@ public class MapReader {
 		int width = Integer.parseInt(split[0]);
 		int height = Integer.parseInt(split[1]);
 		int[][] intMap = new int[width][height];
-		
+		int pathSize = 0;
+		//Get the tile info
 		for(int y = 0; y < height; y++)
 		{
 			String line = fileLines.get(y+1);
@@ -44,8 +45,21 @@ public class MapReader {
 			{
 				//Go through, check to see if the tile needs to be a part of the path
 				intMap[x][y] = Integer.parseInt(tiles[x]);
+				if(intMap[x][y] > pathSize)
+				{
+					pathSize = intMap[x][y];
+				}
 			}
 		}
+		
+		//Get entry/exit direction
+		split = fileLines.get(height+1).split(",");
+		int entryDirection = Integer.parseInt(split[0]);
+		int exitDirection = Integer.parseInt(split[1]);
+		
+		System.out.println("entryDir = " + entryDirection + ", exitDir = " + exitDirection);
+		
+		Vector2D[] pathPoints = new Vector2D[pathSize];
 		
 		Tile[][] newMap = new Tile[width][height];
 		int[] flags = new int[]
@@ -67,6 +81,12 @@ public class MapReader {
 					newMap[x][y].setImage(associatedFileName(TileType.NONE));
 					continue;
 				}
+				
+				//TODO: Use new Vector2D(x,y)
+				Vector2D vec = new Vector2D();
+				vec.x = x;
+				vec.y = y;
+				pathPoints[intMap[x][y] - 1] = vec;
 				
 				int flag = 0;
 				
@@ -93,9 +113,15 @@ public class MapReader {
 					}
 				}
 				
+				if(intMap[x][y] == 1)
+				{
+					flag |= flags[entryDirection];
+				}
+				else if(intMap[x][y] == pathSize)
+				{
+					flag |= flags[exitDirection];
+				}
 				String name = "NONE";
-				
-				System.out.println(flag);
 				
 				switch(flag)
 				{
@@ -128,6 +154,7 @@ public class MapReader {
 			}
 		}
 		map.setTileMap(newMap);
+		map.setPath(pathPoints);
 	}
 	
 	enum TileType

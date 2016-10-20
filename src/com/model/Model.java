@@ -32,7 +32,7 @@ public class Model extends JFrame{
 	{
 		View view = new View();
 		add(view);
-		setSize(500,500);
+		setSize(662,696);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
