@@ -1,7 +1,14 @@
 This file will contain TODOs and ideas.
 
 TODO: Make ideas
+AM
+*Unit arrive, flee, follow path, turn towards heading
+*Path queue
 
+ARB
+*Priority queue based on z buffer
+*renderable comparison via z buffer
+*rendering optimisation
 
 -------------------------
 *************************
