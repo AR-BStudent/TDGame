@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import com.utility.Vector2D;
 import com.visualisation.View;
 
 public class Model extends JFrame{
@@ -45,6 +46,11 @@ public class Model extends JFrame{
 	
 	public void addObject(GameObject go)
 	{
+		if(go == null)
+		{
+			System.out.println("Cannot add null object");
+			return;
+		}
 		gameObjects.add(go);
 	}
 	
@@ -63,6 +69,10 @@ public class Model extends JFrame{
         boolean run = true;
     	float updateRatePerSecond = 2f;
     	float updateInterval = 1000f/updateRatePerSecond;
+    	
+    	Unit unit = new Unit(new Vector2D(0,0));
+    	unit.setImage("towerDefense_tile248.png");
+    	unit.seek(new Vector2D(640, 640));
         while(run)
         {
         	float dt = (float)(System.currentTimeMillis() - lastTime);

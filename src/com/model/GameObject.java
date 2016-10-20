@@ -10,16 +10,13 @@ import com.visualisation.IRenderable;
 
 public abstract class GameObject implements IRenderable{
 	
-	public Vector2D position;
+	public Vector2D position = new Vector2D();
 	
 	//IRenderable implementation
 	private Image image = null;
 	
 	public GameObject()
 	{
-		position = new Vector2D();
-		position.x = 0;
-		position.y = 0;
 		Model.getInstance().addObject(this);
 	}
 	

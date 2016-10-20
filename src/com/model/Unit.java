@@ -6,9 +6,9 @@ import com.utility.Vector2D;
 
 public class Unit extends GameObject {
 
-	private Vector2D location;
-	private Vector2D velocity;
-	private Vector2D acceleration;
+	private Vector2D location = new Vector2D();
+	private Vector2D velocity = new Vector2D();
+	private Vector2D acceleration = new Vector2D();
 	private float maxSpeed = 5;
 	private float maxForce = 4;
 	private float mass = 1;
