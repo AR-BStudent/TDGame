@@ -1,0 +1,43 @@
+package com.model;
+
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+import com.utility.Vector2D;
+import com.visualisation.IRenderable;
+
+public abstract class GameObject implements IRenderable{
+	
+	public Vector2D position;
+	
+	//IRenderable implementation
+	private JLabel picLabel = null;
+	
+	public void setImage(String imageName)
+	{
+		Image image = null;
+		try
+		{
+			image = ImageIO.read(new File("images/" + imageName));
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		picLabel = new JLabel(new ImageIcon(image));
+	}
+	
+	public JLabel getImage()
+	{
+		if(picLabel == null)
+		{
+			System.out.println("No picture assigned to renderable");
+		}
+		return picLabel;
+	}
+}

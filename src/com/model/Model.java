@@ -1,5 +1,7 @@
 package com.model;
 
+import java.util.ArrayList;
+
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -7,9 +9,13 @@ import com.visualisation.View;
 
 public class Model extends JFrame{
 	
+	private ArrayList<GameObject> gameObjects;
+	private Map map;
+	
 	public Model()
 	{
 		initUI();
+		map = new Map();
 	}
 	
 	private void initUI()
