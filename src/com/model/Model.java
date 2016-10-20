@@ -9,28 +9,24 @@ import com.visualisation.View;
 
 public class Model extends JFrame{
 	
-	private static ArrayList<GameObject> gameObjects;
+	private static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
 	private Map map;
 	
-	private static Model _instance;
+	private static Model _instance = null;
+	private static boolean creatingInstance = false;
 	public static Model getInstance()
 	{
 		if(_instance == null)
 		{
 			_instance = new Model();
+			_instance.init();
 		}
 		return _instance;
 	}
 	
-	private Model()
-	{
-		initUI();
+	private void init()
+	{	
 		map = new Map();
-		gameObjects = new ArrayList<GameObject>();
-	}
-	
-	private void initUI()
-	{
 		View view = new View();
 		add(view);
 		setSize(662,696);
@@ -64,13 +60,16 @@ public class Model extends JFrame{
         });
           
         long lastTime = System.currentTimeMillis();
-        
         boolean run = true;
+    	float updateRatePerSecond = 2f;
+    	float updateInterval = 1000f/updateRatePerSecond;
         while(run)
         {
-        	long dt = System.currentTimeMillis() - lastTime;
-        	if(dt > (1000/60))
+        	float dt = (float)(System.currentTimeMillis() - lastTime);
+
+        	if(dt > updateInterval)
         	{
+        		System.out.println(System.currentTimeMillis());
         		for(GameObject go : gameObjects)
         		{
         			go.update((float)dt / 1000f);
