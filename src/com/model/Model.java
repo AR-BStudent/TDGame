@@ -6,15 +6,16 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import com.utility.Vector2D;
+import com.visualisation.Renderable;
 import com.visualisation.View;
+import java.lang.Object;
 
 public class Model extends JFrame{
 	
-	private static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
+	private static ArrayList<Renderable> renderables = new ArrayList<>();
 	private Map map;
-	
 	private static Model _instance = null;
-	private static boolean creatingInstance = false;
+	
 	public static Model getInstance()
 	{
 		if(_instance == null)
@@ -34,9 +35,9 @@ public class Model extends JFrame{
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
-	public ArrayList<GameObject> getGameObjects()
+	public ArrayList<Renderable> getRenderables()
 	{
-		return gameObjects;
+		return renderables;
 	}
 	
 	public Map getMap()
@@ -44,18 +45,22 @@ public class Model extends JFrame{
 		return map;
 	}
 	
-	public void addObject(GameObject go)
+	public void addRenderable(Renderable r)
 	{
-		if(go == null)
+		if(r == null)
 		{
 			System.out.println("Cannot add null object");
 			return;
 		}
-		gameObjects.add(go);
+		renderables.add(r);
 	}
 	
 	public static void main(String[] args) {
 
+    	
+    	Unit unit = new Unit(new Vector2D(0,0));
+    	unit.setImage("towerDefense_tile248.png");
+		
         SwingUtilities.invokeLater(new Runnable() {
             
             @Override
@@ -67,22 +72,24 @@ public class Model extends JFrame{
           
         long lastTime = System.currentTimeMillis();
         boolean run = true;
-    	float updateRatePerSecond = 2f;
+    	float updateRatePerSecond = 60f;
     	float updateInterval = 1000f/updateRatePerSecond;
+
     	
-    	Unit unit = new Unit(new Vector2D(0,0));
-    	unit.setImage("towerDefense_tile248.png");
-    	unit.seek(new Vector2D(640, 640));
+    	Vector2D a = new Vector2D(5, 10);
+    	
         while(run)
         {
         	float dt = (float)(System.currentTimeMillis() - lastTime);
 
         	if(dt > updateInterval)
         	{
+            	unit.seek(new Vector2D(240, 240));
+
         		System.out.println(System.currentTimeMillis());
-        		for(GameObject go : gameObjects)
+        		for(Renderable r : renderables)
         		{
-        			go.update((float)dt / 1000f);
+        			r.update();
         		}
         		lastTime = System.currentTimeMillis();
         	}

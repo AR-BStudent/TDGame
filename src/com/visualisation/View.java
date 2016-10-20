@@ -8,36 +8,29 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.model.GameObject;
 import com.model.Model;
 import com.model.Tile;
 
 public class View extends JPanel {
 	
+	public static final int SCALE = 64;
+	
 	private void doDrawing(Graphics g)
 	{
 		removeAll();
 		repaint();
-		Tile[][] tiles = Model.getInstance().getMap().getTileMap();
-		for(Tile[] row : tiles)
-		{
-			for(Tile t : row)
-			{
-				Image image = t.getImage();
-				JLabel imageLabel = new JLabel();
-				imageLabel.setIcon(new ImageIcon(image));
-				imageLabel.setBounds((int)t.position.x * 64, (int)t.position.y * 64, 64, 64);
-				add(imageLabel);
-			}
-		}
 		
-		ArrayList<GameObject> gameObjects = Model.getInstance().getGameObjects();
-		for(GameObject go : gameObjects)
+		ArrayList<Renderable> renderables = Model.getInstance().getRenderables();
+		for(Renderable r : renderables)
 		{
-			Image image = go.getImage();
+			if(r.toString().contains("Tile"))
+			{
+				continue;
+			}
+			Image image = r.getImage();
 			JLabel imageLabel = new JLabel();
 			imageLabel.setIcon(new ImageIcon(image));
-			imageLabel.setBounds((int)go.position.x * 64, (int)go.position.y * 64, 64, 64);
+			imageLabel.setBounds((int)r.location.x, (int)r.location.y, 64, 64);
 			add(imageLabel);
 		}
 		

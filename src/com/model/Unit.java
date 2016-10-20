@@ -1,14 +1,14 @@
 package com.model;
 
 import com.utility.Vector2D;
+import com.visualisation.Renderable;
 
-public class Unit extends GameObject {
+public class Unit extends Renderable {
 
-	private Vector2D location = new Vector2D();
 	private Vector2D velocity = new Vector2D();
 	private Vector2D acceleration = new Vector2D();
 	private float maxSpeed = 5;
-	private float maxForce = 4;
+	private float maxForce = 0.5f;
 	private float mass = 1;
 
 	public Unit(Vector2D pos) {
@@ -19,12 +19,10 @@ public class Unit extends GameObject {
 		
 	}
 
-	//TODO: Use delta T
 	@Override
-	public void update(float deltaT) {
+	public void update() {
 		velocity.add(acceleration);
 		velocity.limit(maxSpeed);
-		velocity.mult(deltaT);
 		location.add(velocity);
 		acceleration.mult(0);
 	}

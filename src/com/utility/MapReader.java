@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.model.Map;
 import com.model.Tile;
+import com.visualisation.View;
 
 public class MapReader {
 	
@@ -74,8 +75,7 @@ public class MapReader {
 			for(int x = 0; x < width; x++)
 			{
 				newMap[x][y] = new Tile();
-				newMap[x][y].position.x = x;
-				newMap[x][y].position.y = y;
+				newMap[x][y].location = new Vector2D(x, y).mult(View.SCALE);
 				if(intMap[x][y] == 0)
 				{
 					newMap[x][y].setImage(associatedFileName(TileType.NONE));

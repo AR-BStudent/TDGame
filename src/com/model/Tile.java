@@ -1,6 +1,11 @@
 package com.model;
 
-public class Tile extends GameObject {
+import com.visualisation.Renderable;
+
+public class Tile extends Renderable {
+
 	@Override
-	public void update(float deltaT){};
+	public void update() {
+	};
+
 }
