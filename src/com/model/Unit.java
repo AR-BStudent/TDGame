@@ -1,7 +1,5 @@
 package com.model;
 
-import java.time.LocalDate;
-
 import com.utility.Vector2D;
 
 public class Unit extends GameObject {
@@ -14,7 +12,7 @@ public class Unit extends GameObject {
 	private float mass = 1;
 
 	public Unit(Vector2D pos) {
-
+		location = pos;
 	}
 
 	public Unit() {
@@ -26,6 +24,7 @@ public class Unit extends GameObject {
 	public void update(float deltaT) {
 		velocity.add(acceleration);
 		velocity.limit(maxSpeed);
+		velocity.mult(deltaT);
 		location.add(velocity);
 		acceleration.mult(0);
 	}
