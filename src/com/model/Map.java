@@ -9,11 +9,16 @@ public class Map {
 	{
 		//Load in from a file
 		//For now...
-		MapReader.setMap("map_01", this);
+		MapReader.setMap("map_01.txt", this);
 	}
 	
 	public void setTileMap(Tile[][] newMap)
 	{
 		tileMap = newMap;
+	}
+	
+	public Tile[][] getTileMap()
+	{
+		return tileMap;
 	}
 }

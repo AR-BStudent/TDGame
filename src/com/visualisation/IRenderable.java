@@ -1,10 +1,10 @@
 package com.visualisation;
 
-import javax.swing.JLabel;
+import java.awt.Image;
 
 public interface IRenderable {
 	
 	public void setImage(String imageName);
-	public JLabel getImage();
+	public Image getImage();
 	
 }

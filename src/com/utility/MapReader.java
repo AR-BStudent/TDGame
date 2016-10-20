@@ -57,11 +57,15 @@ public class MapReader {
 				};
 		for(int y = 0; y < height; y++)
 		{
-			for(int x = 0; x < 0; x++)
+			for(int x = 0; x < width; x++)
 			{
+				newMap[x][y] = new Tile();
+				newMap[x][y].position.x = x;
+				newMap[x][y].position.y = y;
 				if(intMap[x][y] == 0)
 				{
 					newMap[x][y].setImage(associatedFileName(TileType.NONE));
+					continue;
 				}
 				
 				int flag = 0;
@@ -69,27 +73,29 @@ public class MapReader {
 				if(y < height - 1)
 				{
 					if(intMap[x][y+1] != 0)
-						flag &= flags[0];
+						flag |= flags[0];
 				}
 				if(y != 0)
 				{
 					if(intMap[x][y-1] != 0)
-						flag &= flags[2];
+						flag |= flags[2];
 				}
 				if(x < width - 1)
 				{
 					if(intMap[x+1][y] != 0)
-						flag &= flags[1];
+						flag |= flags[1];
 				}
 				if(x != 0)
 				{
 					if(intMap[x - 1][y] != 0)
 					{
-						flag &= flags[3];
+						flag |= flags[3];
 					}
 				}
 				
 				String name = "NONE";
+				
+				System.out.println(flag);
 				
 				switch(flag)
 				{
@@ -113,11 +119,15 @@ public class MapReader {
 					break;
 				default:
 					System.out.println("ERROR: No appropriate tile type found for tile [" + x + "," + y + "]");
+					//This means that it is probably a starting one.
+					//TODO: Replace the edge connections with actual edge connections.
+					System.out.println("This will be shown as a 'NONE' type. Fix this.");
+					name = "none.png";
 				}
-				
 				newMap[x][y].setImage(name);
 			}
 		}
+		map.setTileMap(newMap);
 	}
 	
 	enum TileType
@@ -142,13 +152,13 @@ public class MapReader {
 		case NORTH_SOUTH:
 			return "north_south.png";
 		case WEST_NORTH:
-			return "west_north.png";
-		case NORTH_EAST:
-			return "north_east.png";
-		case EAST_SOUTH:
-			return "east_south.png";
-		case SOUTH_WEST:
 			return "south_west.png";
+		case NORTH_EAST:
+			return "east_south.png";
+		case EAST_SOUTH:	
+			return "north_east.png";
+		case SOUTH_WEST:
+			return "west_north.png";
 		}
 		return null;
 	}

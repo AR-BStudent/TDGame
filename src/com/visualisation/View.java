@@ -2,34 +2,46 @@ package com.visualisation;
 
 import java.awt.Graphics;
 import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.model.Model;
+import com.model.Tile;
+
 public class View extends JPanel {
+	
 	private void doDrawing(Graphics g)
 	{
-		Image image = null;
-		try
+		removeAll();
+		repaint();
+		Tile[][] tiles = Model.getInstance().getMap().getTileMap();
+		for(Tile[] row : tiles)
 		{
-			image = ImageIO.read(new File("images/towerDefense_tile001.png"));
+			for(Tile t : row)
+			{
+				Image image = t.getImage();
+				JLabel imageLabel = new JLabel();
+				imageLabel.setIcon(new ImageIcon(image));
+				imageLabel.setBounds((int)t.position.x * 64, (int)t.position.y * 64, 64, 64);
+				add(imageLabel);
+			}
 		}
-		catch(IOException e)
+		/*
+		ArrayList<GameObject> gameObjects = Model.getInstance().getGameObjects();
+		for(GameObject go : gameObjects)
 		{
-			e.printStackTrace();
+			JLabel image = go.getImage();
+			add(image);
 		}
-		JLabel picLabel = new JLabel(new ImageIcon(image));
-		add(picLabel);
+		*/
 	}
 	
 	@Override
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
+		
 		doDrawing(g);
 	}
 }

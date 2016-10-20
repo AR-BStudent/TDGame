@@ -5,9 +5,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-
 import com.utility.Vector2D;
 import com.visualisation.IRenderable;
 
@@ -16,7 +13,14 @@ public abstract class GameObject implements IRenderable{
 	public Vector2D position;
 	
 	//IRenderable implementation
-	private JLabel picLabel = null;
+	private Image image = null;
+	
+	public GameObject()
+	{
+		position = new Vector2D();
+		position.x = 0;
+		position.y = 0;
+	}
 	
 	public void setImage(String imageName)
 	{
@@ -27,17 +31,19 @@ public abstract class GameObject implements IRenderable{
 		}
 		catch(IOException e)
 		{
+			System.out.println("Could not find file: images/" + imageName);
 			e.printStackTrace();
 		}
-		picLabel = new JLabel(new ImageIcon(image));
+		
+		this.image = image.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
 	}
 	
-	public JLabel getImage()
+	public Image getImage()
 	{
-		if(picLabel == null)
+		if(image == null)
 		{
 			System.out.println("No picture assigned to renderable");
 		}
-		return picLabel;
+		return image;
 	}
 }
