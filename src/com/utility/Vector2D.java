@@ -48,6 +48,11 @@ public class Vector2D {
 		return diff.mag();
 	}
 
+	public static float dist(Vector2D a, Vector2D b) {
+		float d = a.dist(b);
+		return d;
+	}
+
 	public float mag() {
 		return (float) Math.sqrt(x * x + y * y);
 	}
@@ -145,6 +150,10 @@ public class Vector2D {
 		normalize();
 		mult(m);
 		return this;
+	}
+
+	public float dot(Vector2D v) {
+		return x * v.x + y * v.y;
 	}
 
 	@Override
