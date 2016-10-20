@@ -18,9 +18,11 @@ public class Unit extends GameObject {
 	}
 
 	public Unit() {
-
+		
 	}
 
+	//TODO: Use delta T
+	@Override
 	public void update(float deltaT) {
 		velocity.add(acceleration);
 		velocity.limit(maxSpeed);

@@ -9,7 +9,7 @@ import com.visualisation.View;
 
 public class Model extends JFrame{
 	
-	private ArrayList<GameObject> gameObjects;
+	private static ArrayList<GameObject> gameObjects;
 	private Map map;
 	
 	private static Model _instance;
@@ -26,6 +26,7 @@ public class Model extends JFrame{
 	{
 		initUI();
 		map = new Map();
+		gameObjects = new ArrayList<GameObject>();
 	}
 	
 	private void initUI()
@@ -46,6 +47,11 @@ public class Model extends JFrame{
 		return map;
 	}
 	
+	public void addObject(GameObject go)
+	{
+		gameObjects.add(go);
+	}
+	
 	public static void main(String[] args) {
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -55,6 +61,22 @@ public class Model extends JFrame{
                 Model game = Model.getInstance();
                 game.setVisible(true);
             }
-        });                
+        });
+          
+        long lastTime = System.currentTimeMillis();
+        
+        boolean run = true;
+        while(run)
+        {
+        	long dt = System.currentTimeMillis() - lastTime;
+        	if(dt > (1000/60))
+        	{
+        		for(GameObject go : gameObjects)
+        		{
+        			go.update((float)dt / 1000f);
+        		}
+        		lastTime = System.currentTimeMillis();
+        	}
+        }
     } 
 }

@@ -20,7 +20,10 @@ public abstract class GameObject implements IRenderable{
 		position = new Vector2D();
 		position.x = 0;
 		position.y = 0;
+		Model.getInstance().addObject(this);
 	}
+	
+	public abstract void update(float deltaT);
 	
 	public void setImage(String imageName)
 	{

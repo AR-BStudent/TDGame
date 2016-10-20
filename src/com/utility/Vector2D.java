@@ -30,6 +30,8 @@ public class Vector2D {
 	public float sqrMag() {
 		return x * x + y * y;
 	}
+	
+	//TODO: daisy chainging
 
 	public void add(Vector2D v) {
 		x += v.x;
