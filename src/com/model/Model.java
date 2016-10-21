@@ -1,20 +1,17 @@
 package com.model;
 
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 import java.util.concurrent.ThreadLocalRandom;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 import com.utility.Vector2D;
 import com.visualisation.Renderable;
 import com.visualisation.View;
-import java.lang.Object;
 
-public class Model extends JFrame {
+public class Model extends Thread{
 
-	private static ArrayList<Renderable> renderables = new ArrayList<>();
-	private Map map;
+	private static PriorityQueue<Renderable> renderables = new PriorityQueue<>();
+	private static Map map;
 	private static Model _instance = null;
 
 	public static Model getInstance() {
@@ -26,14 +23,10 @@ public class Model extends JFrame {
 	}
 
 	private void init() {
-		map = new Map();
-		View view = new View();
-		add(view);
-		setSize(662, 696);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		map = new Map("map_02.txt");
 	}
 
-	public ArrayList<Renderable> getRenderables() {
+	public PriorityQueue<Renderable> getRenderables() {
 		return renderables;
 	}
 
@@ -49,7 +42,7 @@ public class Model extends JFrame {
 		renderables.add(r);
 	}
 
-	public static void main(String[] args) {
+	public void run() {
 		ArrayList<Unit> units = new ArrayList<>();
 		for (int i = 0; i < 10; ++i) {
 			int x = ThreadLocalRandom.current().nextInt(0, 100);
@@ -59,15 +52,6 @@ public class Model extends JFrame {
 			units.add(u);
 		}
 
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				Model game = Model.getInstance();
-				game.setVisible(true);
-			}
-		});
-
 		long lastTime = System.currentTimeMillis();
 		boolean run = true;
 		float updateRatePerSecond = 60f;
@@ -75,9 +59,7 @@ public class Model extends JFrame {
 
 		Vector2D a = new Vector2D(5, 10);
 
-		Path path = new Path(new Vector2D(0, 0), new Vector2D(0, 400), new Vector2D(100, 400), new Vector2D(100, 0),
-				new Vector2D(200, 0), new Vector2D(200, 400), new Vector2D(300, 400), new Vector2D(300, 0),
-				new Vector2D(400, 0), new Vector2D(400, 400));
+		Path path = map.getPath();
 
 		while (run) {
 			float dt = (float) (System.currentTimeMillis() - lastTime);
@@ -86,11 +68,14 @@ public class Model extends JFrame {
 				for (Unit u : units) {
 					u.follow(path);
 				}
-
-				System.out.println(System.currentTimeMillis());
+				
+				//System.out.println(System.currentTimeMillis());
 				for (Renderable r : renderables) {
 					r.update();
 				}
+				
+				View.getInstance().update();
+				
 				lastTime = System.currentTimeMillis();
 			}
 		}

@@ -1,46 +1,72 @@
 package com.visualisation;
 
+import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
-import java.util.ArrayList;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.util.PriorityQueue;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.model.Model;
-import com.model.Tile;
 
-public class View extends JPanel {
+
+public class View extends JFrame {
 	
 	public static final int SCALE = 64;
-	
-	private void doDrawing(Graphics g)
-	{
-		removeAll();
-		repaint();
-		
-		ArrayList<Renderable> renderables = Model.getInstance().getRenderables();
-		for(Renderable r : renderables)
-		{
-			if(r.toString().contains("Tile"))
-			{
-				continue;
-			}
-			Image image = r.getImage();
-			JLabel imageLabel = new JLabel();
-			imageLabel.setIcon(new ImageIcon(image));
-			imageLabel.setBounds((int)r.location.x, (int)r.location.y, 64, 64);
-			add(imageLabel);
+	private static View _instance;
+	public static View getInstance() {
+		if (_instance == null) {
+			_instance = new View();
 		}
-		
+		return _instance;
 	}
 	
-	@Override
+	public static void main(String[] args)
+	{
+		Model.getInstance().start();
+		View.getInstance();
+	}
+	
+	public View()
+	{
+		super("Tower Defense Game");
+		
+		setSize(662, 696);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		add(new ViewPanel());
+		setVisible(true);
+	}
+	
+	public void update()
+	{
+		repaint();
+	}
+}
+
+class ViewPanel extends JPanel {
+	
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
+		AffineTransform transform = new AffineTransform();
 		
-		doDrawing(g);
+		Graphics2D spriteBatch = (Graphics2D)g;
+		
+		//Reset background
+		spriteBatch.setColor(Color.BLACK);
+		spriteBatch.fillRect(0, 0, getSize().width, getSize().height);
+		
+		PriorityQueue<Renderable> renderables = Model.getInstance().getRenderables();
+		for(Renderable r : renderables)
+		{
+			transform.rotate(r.getRotation());
+			transform.translate(r.location.x, r.location.y);
+			spriteBatch.drawImage(r.getImage(), transform, this);
+			//Reset rotation and location for next image
+			transform.rotate(-r.getRotation());
+			transform.translate(-r.location.x, -r.location.y);
+		}
 	}
 }

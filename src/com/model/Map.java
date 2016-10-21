@@ -7,12 +7,12 @@ public class Map {
 	Tile[][] tileMap;
 	Path mapPath;
 
-	public Map()
+	public Map(String fileName)
 	{
 		//Load in from a file
 		//For now...
 		mapPath = new Path();
-		MapReader.setMap("map_01.txt", this);
+		MapReader.setMap(fileName, this);
 	}
 	
 	public void setTileMap(Tile[][] newMap)

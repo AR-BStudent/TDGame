@@ -58,9 +58,9 @@ public class MapReader {
 		int entryDirection = Integer.parseInt(split[0]);
 		int exitDirection = Integer.parseInt(split[1]);
 		
-		System.out.println("entryDir = " + entryDirection + ", exitDir = " + exitDirection);
-		
-		Vector2D[] pathPoints = new Vector2D[pathSize];
+		//System.out.println("entryDir = " + entryDirection + ", exitDir = " + exitDirection);
+		//Add 2 to path size to allow for a prior and post positioning
+		Vector2D[] pathPoints = new Vector2D[pathSize + 2];
 		
 		Tile[][] newMap = new Tile[width][height];
 		int[] flags = new int[]
@@ -82,23 +82,20 @@ public class MapReader {
 					continue;
 				}
 				
-				//TODO: Use new Vector2D(x,y)
-				Vector2D vec = new Vector2D();
-				vec.x = x;
-				vec.y = y;
-				pathPoints[intMap[x][y] - 1] = vec;
+				Vector2D vec = new Vector2D(x,y).mult(View.SCALE);
+				pathPoints[intMap[x][y]] = vec;
 				
 				int flag = 0;
 				
 				if(y < height - 1)
 				{
 					if(intMap[x][y+1] != 0)
-						flag |= flags[0];
+						flag |= flags[2];
 				}
 				if(y != 0)
 				{
 					if(intMap[x][y-1] != 0)
-						flag |= flags[2];
+						flag |= flags[0];
 				}
 				if(x < width - 1)
 				{
@@ -154,6 +151,36 @@ public class MapReader {
 			}
 		}
 		map.setTileMap(newMap);
+		switch(entryDirection)
+		{
+		case 0:
+			pathPoints[0] = Vector2D.sub(pathPoints[1], new Vector2D(0,View.SCALE));
+			break;
+		case 1:
+			pathPoints[0] = Vector2D.sub(pathPoints[1], new Vector2D(View.SCALE,0));
+			break;
+		case 2:
+			pathPoints[0] = Vector2D.sub(pathPoints[1], new Vector2D(0,-View.SCALE));
+			break;
+		case 3:
+			pathPoints[0] = Vector2D.sub(pathPoints[1], new Vector2D(-View.SCALE,0));
+			break;
+		}
+		switch(exitDirection)
+		{
+		case 0:
+			pathPoints[pathSize+1] = Vector2D.sub(pathPoints[pathSize], new Vector2D(0,View.SCALE));
+			break;
+		case 1:
+			pathPoints[pathSize+1] = Vector2D.sub(pathPoints[pathSize], new Vector2D(View.SCALE,0));
+			break;
+		case 2:
+			pathPoints[pathSize+1] = Vector2D.sub(pathPoints[pathSize], new Vector2D(0,-View.SCALE));
+			break;
+		case 3:
+			pathPoints[pathSize+1] = Vector2D.sub(pathPoints[pathSize], new Vector2D(-View.SCALE,0));
+			break;
+		}
 		map.setPath(pathPoints);
 	}
 	
@@ -179,13 +206,13 @@ public class MapReader {
 		case NORTH_SOUTH:
 			return "north_south.png";
 		case WEST_NORTH:
-			return "south_west.png";
-		case NORTH_EAST:
-			return "east_south.png";
-		case EAST_SOUTH:	
-			return "north_east.png";
-		case SOUTH_WEST:
 			return "west_north.png";
+		case NORTH_EAST:
+			return "north_east.png";
+		case EAST_SOUTH:	
+			return "east_south.png";
+		case SOUTH_WEST:
+			return "south_west.png";
 		}
 		return null;
 	}

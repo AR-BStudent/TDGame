@@ -12,14 +12,50 @@ import javax.imageio.ImageIO;
 import com.model.Model;
 import com.utility.Vector2D;
 
-public abstract class Renderable {
+public abstract class Renderable implements Comparable<Renderable> {
+
+	@Override
+	public int compareTo(Renderable other) {
+		int otherZ = other.getZBuffer();
+		if (zBuffer == otherZ) {
+			return 0;
+		} else if (zBuffer < otherZ) {
+			return -1;
+		}
+		return 1;
+	}
 
 	public Vector2D location = new Vector2D();
 
 	protected Image image = null;
+	protected int zBuffer = 0;
+	protected float rotation = 0;
 
-	public Renderable() {
+	public Renderable(int z) {
+		zBuffer = z;
 		Model.getInstance().addRenderable(this);
+	}
+
+	public int getZBuffer() {
+		return zBuffer;
+	}
+	
+	//TODO: Store a transform, don't create one every time you need to render.
+	public AffineTransform getTransform()
+	{
+		AffineTransform t = new AffineTransform();
+		t.rotate(rotation);
+		return t;
+	}
+	
+	public float getRotation()
+	{
+		return rotation;
+	}
+	
+	public void setRotation(float radians)
+	{
+		rotation = radians;
 	}
 
 	public void setImage(String imageName) {
@@ -42,21 +78,5 @@ public abstract class Renderable {
 	}
 
 	public abstract void update();
-
-	public void rotate(float theta) {
-		/*
-		 * Graphics2D and BufferedImage allow transformations
-		 * so I think we should change the rendering to use these rather than the base Image class
-		 * Will need major rewrite so haven't changed anything yet
-		 * 
-		 * N.B. below is a sub method which shows how image would be rotated (if it was the correct type)
-		 */
-		BufferedImage bimage = new BufferedImage(image.getWidth(null), image.getHeight(null),
-				BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = (Graphics2D) bimage.getGraphics();
-		AffineTransform old = g2d.getTransform();
-		g2d.rotate(theta);
-		g2d.setTransform(old);
-	}
 
 }
