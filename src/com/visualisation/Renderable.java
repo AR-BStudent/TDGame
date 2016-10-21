@@ -1,5 +1,6 @@
 package com.visualisation;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.io.File;
@@ -7,7 +8,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.model.Model;
 import com.utility.Vector2D;
 
 public abstract class Renderable implements Comparable<Renderable> {
@@ -26,19 +26,10 @@ public abstract class Renderable implements Comparable<Renderable> {
 
 	public Renderable(Layer z) {
 		zBuffer = z;
-		Model.getInstance().addRenderable(this);
 	}
 
 	public Layer getZBuffer() {
 		return zBuffer;
-	}
-	
-	//TODO: Store a transform, don't create one every time you need to render.
-	public AffineTransform getTransform()
-	{
-		AffineTransform t = new AffineTransform();
-		t.rotate(rotation);
-		return t;
 	}
 	
 	public float getRotation()
@@ -68,6 +59,14 @@ public abstract class Renderable implements Comparable<Renderable> {
 			System.out.println("No picture assigned to renderable");
 		}
 		return image;
+	}
+	
+	public void draw(Graphics2D canvas)
+	{
+		AffineTransform transform = new AffineTransform();
+		transform.rotate(getRotation(), location.x + (View.SCALE / 2), location.y + (View.SCALE / 2));;
+		transform.translate(location.x, location.y);
+		canvas.drawImage(getImage(), transform, View.getInstance().vp);
 	}
 
 	public abstract void update();

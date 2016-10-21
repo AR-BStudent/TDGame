@@ -29,7 +29,6 @@ public class Controller implements KeyListener, MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent event) {
-		// TODO Auto-generated method stub
 		for (MouseClickedListener l : mouseClickedListeners) {
 			l.mouseClicked(event);
 		}
@@ -47,7 +46,6 @@ public class Controller implements KeyListener, MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent event) {
-		// TODO Auto-generated method stub
 		for (MouseEnteredListener l : mouseEnteredListeners) {
 			l.mouseEntered(event);
 		}
@@ -65,7 +63,6 @@ public class Controller implements KeyListener, MouseListener {
 
 	@Override
 	public void mouseExited(MouseEvent event) {
-		// TODO Auto-generated method stub
 		for (MouseExitedListener l : mouseExitedListeners) {
 			l.mouseExited(event);
 		}
@@ -83,7 +80,6 @@ public class Controller implements KeyListener, MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent event) {
-		// TODO Auto-generated method stub
 		for (MousePressedListener l : mousePressedListeners) {
 			l.mousePressed(event);
 		}
@@ -101,7 +97,6 @@ public class Controller implements KeyListener, MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent event) {
-		// TODO Auto-generated method stub
 		for (MouseReleasedListener l : mouseReleasedListeners) {
 			l.mouseReleased(event);
 		}
