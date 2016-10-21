@@ -84,7 +84,7 @@ public class Model extends JFrame {
 
 			if (dt > updateInterval) {
 				for (Unit u : units) {
-					u.follow(path);
+					u.applyBehaviours(path, units);
 				}
 
 				System.out.println(System.currentTimeMillis());

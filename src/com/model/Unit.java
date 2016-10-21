@@ -1,6 +1,6 @@
 package com.model;
 
-import java.beans.PropertyVetoException;
+import java.util.Collection;
 
 import com.utility.Vector2D;
 import com.visualisation.Renderable;
@@ -10,7 +10,7 @@ public class Unit extends Renderable {
 	private Vector2D velocity = new Vector2D();
 	private Vector2D acceleration = new Vector2D();
 	private float maxSpeed = 4;
-	private float maxForce = 0.2f;
+	private float maxForce = 0.5f;
 	private float mass = 1;
 
 	public Unit(Vector2D pos) {
@@ -34,13 +34,13 @@ public class Unit extends Renderable {
 		acceleration.add(force);
 	}
 
-	public void seek(Vector2D target) {
+	public Vector2D seek(Vector2D target) {
 		Vector2D desired = Vector2D.sub(target, location);
 		desired.setMag(maxSpeed);
-		steer(desired);
+		return steer(desired);
 	}
 
-	public void arrive(Vector2D target) {
+	public Vector2D arrive(Vector2D target) {
 		Vector2D desired = Vector2D.sub(target, location);
 
 		float dsq = desired.sqrMag();
@@ -56,17 +56,17 @@ public class Unit extends Renderable {
 			desired.mult(maxSpeed);
 		}
 
-		steer(desired);
+		return steer(desired);
 	}
 
 	private float getStoppingDist() {
 		return (maxSpeed * maxSpeed) / (2 * maxForce);
 	}
 
-	private void steer(Vector2D desired) {
+	private Vector2D steer(Vector2D desired) {
 		Vector2D steer = Vector2D.sub(desired, velocity);
 		steer.limit(maxForce);
-		applyForce(steer);
+		return steer;
 	}
 
 	// Radians
@@ -75,7 +75,7 @@ public class Unit extends Renderable {
 	}
 
 	// Basic N.B. will need separate flocking methods
-	public void follow(Path p) {
+	public Vector2D follow(Path p) {
 		Vector2D target = p.currentPoint();
 
 		Vector2D dir = Vector2D.sub(target, location);
@@ -88,10 +88,80 @@ public class Unit extends Renderable {
 		}
 
 		if (target == p.end()) {
-			arrive(target);
+			return arrive(target);
 		} else {
-			seek(target);
+			return seek(target);
 		}
+	}
+
+	public Vector2D separate(Collection<Unit> units) {
+		// todo neigbour dist based on separation and radius
+		float desiredSeparation = 100;
+
+		Vector2D sum = new Vector2D();
+		int count = 0;
+
+		for (Unit u : units) {
+			Vector2D dir = Vector2D.sub(u.location, location);
+			float d = dir.mag();
+			if (d > 0 && d < desiredSeparation) {
+				Vector2D diff = Vector2D.sub(location, u.location);
+				diff.normalize();
+				diff.div(d);
+				sum.add(diff);
+				count++;
+			}
+		}
+
+		if (count > 0) {
+			sum.div(count);
+			sum.normalize();
+			sum.mult(maxForce);
+			Vector2D steer = Vector2D.sub(sum, velocity);
+			steer.limit(maxForce);
+			return steer;
+		}
+		return new Vector2D();
+	}
+
+	public Vector2D cohesion(Collection<Unit> units) {
+		float neighbourDist = 100;
+		Vector2D sum = new Vector2D();
+		int count = 0;
+
+		for (Unit u : units) {
+			Vector2D dir = Vector2D.sub(u.location, location);
+			float d = dir.mag();
+			if (d > 0 && d < neighbourDist) {
+				sum.add(u.location);
+				count++;
+			}
+		}
+		if (count > 0) {
+			sum.div(count);
+			return seek(sum);
+		} else {
+			return new Vector2D();
+		}
+	}
+
+	public void applyBehaviours(Path p, Collection<Unit> units) {
+		Vector2D follow = follow(p);
+		Vector2D sep = separate(units);
+		Vector2D coh = cohesion(units);
+
+		follow.mult(1f);
+		sep.mult(1.8f);
+		coh.mult(1f);
+
+		Vector2D force = new Vector2D();
+		force.add(follow);
+		force.add(sep);
+		force.add(coh);
+
+		force.limit(maxForce);
+
+		applyForce(force);
 	}
 
 }
