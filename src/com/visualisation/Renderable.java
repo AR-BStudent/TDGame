@@ -29,7 +29,7 @@ public abstract class Renderable implements Comparable<Renderable> {
 
 	protected Image image = null;
 	protected int zBuffer = 0;
-	protected float rotation = 0;
+	private float rotation = 0;
 
 	public Renderable(int z) {
 		zBuffer = z;

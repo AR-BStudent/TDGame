@@ -12,6 +12,11 @@ public class Unit extends Renderable {
 	private float maxSpeed = 4;
 	private float maxForce = 0.5f;
 	private float mass = 1;
+	private float radius = 8;
+	private Collection<Unit> neighbours;
+	
+	private float smoothedAngle;
+	private float smoothing  = 5f;
 
 	public Unit(Vector2D pos) {
 		super(1);
@@ -28,9 +33,16 @@ public class Unit extends Renderable {
 		velocity.limit(maxSpeed);
 		location.add(velocity);
 		acceleration.mult(0);
-		rotation = getHeading();
+		
+		applyRotation();
+//		preventOverlap(neighbours);
 	}
 
+	private void applyRotation(){
+		smoothedAngle += (getHeading() - smoothedAngle) / smoothing;
+		setRotation(smoothedAngle);
+	}
+	
 	public void applyForce(Vector2D force) {
 		force.div(mass);
 		acceleration.add(force);
@@ -153,7 +165,7 @@ public class Unit extends Renderable {
 		Vector2D coh = cohesion(units);
 
 		follow.mult(1f);
-		sep.mult(1.8f);
+		sep.mult(1.9f);
 		coh.mult(1f);
 
 		Vector2D force = new Vector2D();
@@ -164,6 +176,22 @@ public class Unit extends Renderable {
 		force.limit(maxForce);
 
 		applyForce(force);
+		
+		neighbours = units;
+//		preventOverlap(units);
+	}
+
+	public void preventOverlap(Collection<Unit> units) {
+		for (Unit other : units) {
+			Vector2D dir = Vector2D.sub(location, other.location);
+			float dsq = dir.sqrMag();
+			float minDist = radius + other.radius;
+			if (dsq <= minDist * minDist) {
+				dir.setMag(minDist);
+				location.add(dir);
+			}
+	
+		}
 	}
 
 }
