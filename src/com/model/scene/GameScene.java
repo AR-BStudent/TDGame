@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.model.Map;
 import com.model.Path;
+import com.model.Soldier;
 import com.model.Squad;
 import com.model.Tile;
 import com.model.Unit;
@@ -19,6 +20,13 @@ public class GameScene extends Scene {
 	@Override
 	public void update() {
 		squad.update();
+		
+		int chance = ThreadLocalRandom.current().nextInt(0, 100);
+		if(chance > 95){
+			int i = ThreadLocalRandom.current().nextInt(0, squad.getMembers().size());
+			((Soldier)squad.getMembers().get(i)).takeDamage(1000);
+			System.out.println("Removed soldier");
+		}
 	}
 
 	@Override
@@ -37,7 +45,7 @@ public class GameScene extends Scene {
 		for (int i = 0; i < 10; ++i) {
 			int x = ThreadLocalRandom.current().nextInt(0, 100);
 			int y = ThreadLocalRandom.current().nextInt(0, 100);
-			Unit u = new Unit(new Vector2D(x, y));
+			Soldier u = new Soldier();
 			u.setImage("towerDefense_tile248.png");
 			units.add(u);
 			renderables.add(u);

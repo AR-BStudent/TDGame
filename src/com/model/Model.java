@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.model.scene.GameScene;
 import com.model.scene.Scene;
+import com.visualisation.Renderable;
 import com.visualisation.View;
 
 public class Model extends Thread{
@@ -42,7 +43,11 @@ public class Model extends Thread{
 		newScene.onEnter();
 		return true;
 	}
-
+	
+	public void removeRenderable(Renderable r){
+		currentScene.removeRenderable(r);
+	}
+	
 	public void run() {
 		//Add Scenes
 		GameScene gs = new GameScene();

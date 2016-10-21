@@ -23,6 +23,10 @@ public abstract class Scene {
 	}
 	public abstract void onEnter();
 	public abstract void onExit();
+	
+	public void removeRenderable(Renderable r){
+		renderables.remove(r);
+	}
 
 	@Override
 	public int hashCode() {

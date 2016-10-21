@@ -13,7 +13,7 @@ public class Unit extends Renderable {
 	private float radius = 8;
 	private Squad squad;
 	private float smoothedAngle;
-	private float smoothing = 5f;
+	private float smoothing = 6f;
 
 	public Unit(Vector2D pos) {
 		this();
