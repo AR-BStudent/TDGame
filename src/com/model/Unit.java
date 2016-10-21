@@ -14,11 +14,12 @@ public class Unit extends Renderable {
 	private float mass = 1;
 
 	public Unit(Vector2D pos) {
+		super(1);
 		location = pos;
 	}
 
 	public Unit() {
-
+		super(1);
 	}
 
 	@Override
