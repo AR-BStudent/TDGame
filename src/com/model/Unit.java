@@ -9,22 +9,22 @@ public class Unit extends Renderable {
 
 	private Vector2D velocity = new Vector2D();
 	private Vector2D acceleration = new Vector2D();
-	private float maxSpeed = 4;
+	private float maxSpeed = 6;
 	private float maxForce = 0.5f;
 	private float mass = 1;
 	private float radius = 8;
-	private Collection<Unit> neighbours;
-	
+//	private Collection<Unit> neighbours;
+
 	private float smoothedAngle;
-	private float smoothing  = 5f;
+	private float smoothing = 5f;
 
 	public Unit(Vector2D pos) {
-		super(1);
+		this();
 		location = pos;
 	}
 
 	public Unit() {
-		super(1);
+		super(Layer.UNIT);
 	}
 
 	@Override
@@ -33,16 +33,16 @@ public class Unit extends Renderable {
 		velocity.limit(maxSpeed);
 		location.add(velocity);
 		acceleration.mult(0);
-		
+
 		applyRotation();
-//		preventOverlap(neighbours);
+		// preventOverlap(neighbours);
 	}
 
-	private void applyRotation(){
+	private void applyRotation() {
 		smoothedAngle += (getHeading() - smoothedAngle) / smoothing;
 		setRotation(smoothedAngle);
 	}
-	
+
 	public void applyForce(Vector2D force) {
 		force.div(mass);
 		acceleration.add(force);
@@ -176,22 +176,22 @@ public class Unit extends Renderable {
 		force.limit(maxForce);
 
 		applyForce(force);
-		
-		neighbours = units;
-//		preventOverlap(units);
+
+//		neighbours = units;
+		// preventOverlap(units);
 	}
 
-	public void preventOverlap(Collection<Unit> units) {
-		for (Unit other : units) {
-			Vector2D dir = Vector2D.sub(location, other.location);
-			float dsq = dir.sqrMag();
-			float minDist = radius + other.radius;
-			if (dsq <= minDist * minDist) {
-				dir.setMag(minDist);
-				location.add(dir);
-			}
-	
-		}
-	}
+	// public void preventOverlap(Collection<Unit> units) {
+	// for (Unit other : units) {
+	// Vector2D dir = Vector2D.sub(location, other.location);
+	// float dsq = dir.sqrMag();
+	// float minDist = radius + other.radius;
+	// if (dsq <= minDist * minDist) {
+	// dir.setMag(minDist);
+	// location.add(dir);
+	// }
+	//
+	// }
+	// }
 
 }

@@ -6,7 +6,7 @@ public class Tile extends Renderable {
 
 	public Tile()
 	{
-		super(0);
+		super(Renderable.Layer.GROUND);
 	}
 	
 	@Override

@@ -2,13 +2,13 @@ This file will contain TODOs and ideas.
 
 TODO: Make ideas
 AM
-*Unit arrive, flee, follow path, turn towards heading
-*Path queue
+*Collision detection
+*Angular acceleration
 
 ARB
-*Priority queue based on z buffer
-*renderable comparison via z buffer
-*rendering optimisation
+*Scaling/window resizing response
+*Listeners
+*Scene Manager - move from model to modular system
 
 -------------------------
 *************************
