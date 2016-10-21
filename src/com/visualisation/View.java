@@ -24,6 +24,8 @@ public class View extends JFrame {
 		}
 		return _instance;
 	}
+
+	ViewPanel vp;
 	
 	public static void main(String[] args)
 	{
@@ -36,7 +38,8 @@ public class View extends JFrame {
 		
 		setSize(662, 696);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		add(new ViewPanel());
+		vp = new ViewPanel();
+		add(vp);
 		//addComponentListener(new WindowListener());
 		setResizable(false);
 		setVisible(true);
@@ -57,44 +60,8 @@ class ViewPanel extends JPanel {
 		Graphics2D spriteBatch = (Graphics2D)g;
 		
 		//Reset background
-		spriteBatch.setColor(Color.BLACK);
+		spriteBatch.setColor(Color.PINK);
 		spriteBatch.fillRect(0, 0, getSize().width, getSize().height);
-		
-		PriorityQueue<Renderable> renderables = Model.getInstance().getRenderables();
-		for(Renderable r : renderables)
-		{
-			AffineTransform transform = new AffineTransform();
-			transform.rotate(r.getRotation(), r.location.x + (View.SCALE / 2), r.location.y + (View.SCALE / 2));;
-			transform.translate(r.location.x, r.location.y);
-			spriteBatch.drawImage(r.getImage(), transform, this);
-		}
+		Model.getInstance().getCurrentScene().draw(spriteBatch);
 	}
-}
-
-class WindowListener implements ComponentListener
-{
-
-	@Override
-	public void componentHidden(ComponentEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void componentMoved(ComponentEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void componentResized(ComponentEvent arg0) {
-		//TODO: Implement scaling based on window size.
-	}
-
-	@Override
-	public void componentShown(ComponentEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

@@ -142,8 +142,6 @@ public class MapReader {
 					break;
 				default:
 					System.out.println("ERROR: No appropriate tile type found for tile [" + x + "," + y + "]");
-					//This means that it is probably a starting one.
-					//TODO: Replace the edge connections with actual edge connections.
 					System.out.println("This will be shown as a 'NONE' type. Fix this.");
 					name = "none.png";
 				}
