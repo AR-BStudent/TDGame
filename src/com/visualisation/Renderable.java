@@ -14,29 +14,24 @@ import com.utility.Vector2D;
 
 public abstract class Renderable implements Comparable<Renderable> {
 
-	@Override
-	public int compareTo(Renderable other) {
-		int otherZ = other.getZBuffer();
-		if (zBuffer == otherZ) {
-			return 0;
-		} else if (zBuffer < otherZ) {
-			return -1;
-		}
-		return 1;
-	}
-
 	public Vector2D location = new Vector2D();
 
 	protected Image image = null;
-	protected int zBuffer = 0;
+	protected Layer zBuffer = Layer.GROUND;
 	protected float rotation = 0;
+	
+	@Override
+	public int compareTo(Renderable other)
+	{
+		return zBuffer.compareTo(other.getZBuffer());
+	}
 
-	public Renderable(int z) {
+	public Renderable(Layer z) {
 		zBuffer = z;
 		Model.getInstance().addRenderable(this);
 	}
 
-	public int getZBuffer() {
+	public Layer getZBuffer() {
 		return zBuffer;
 	}
 	
@@ -78,5 +73,12 @@ public abstract class Renderable implements Comparable<Renderable> {
 	}
 
 	public abstract void update();
-
+	
+	public enum Layer
+	{
+		GROUND,
+		UNIT,
+		FX,
+		UI
+	}
 }
