@@ -28,6 +28,7 @@ public class Unit extends Renderable {
 		velocity.limit(maxSpeed);
 		location.add(velocity);
 		acceleration.mult(0);
+		rotation = getHeading();
 	}
 
 	public void applyForce(Vector2D force) {

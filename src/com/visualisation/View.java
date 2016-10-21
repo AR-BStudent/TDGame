@@ -26,7 +26,6 @@ public class View extends JFrame {
 	public static void main(String[] args)
 	{
 		Model.getInstance().start();
-		View.getInstance();
 	}
 	
 	public View()
@@ -50,7 +49,6 @@ class ViewPanel extends JPanel {
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		AffineTransform transform = new AffineTransform();
 		
 		Graphics2D spriteBatch = (Graphics2D)g;
 		
@@ -61,12 +59,10 @@ class ViewPanel extends JPanel {
 		PriorityQueue<Renderable> renderables = Model.getInstance().getRenderables();
 		for(Renderable r : renderables)
 		{
-			transform.rotate(r.getRotation());
+			AffineTransform transform = new AffineTransform();
+			transform.rotate(r.getRotation(), r.location.x + (View.SCALE / 2), r.location.y + (View.SCALE / 2));;
 			transform.translate(r.location.x, r.location.y);
 			spriteBatch.drawImage(r.getImage(), transform, this);
-			//Reset rotation and location for next image
-			transform.rotate(-r.getRotation());
-			transform.translate(-r.location.x, -r.location.y);
 		}
 	}
 }
