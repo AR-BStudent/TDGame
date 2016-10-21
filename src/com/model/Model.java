@@ -51,6 +51,10 @@ public class Model extends Thread{
 			u.setImage("towerDefense_tile248.png");
 			units.add(u);
 		}
+		
+		Squad squad = new Squad(units);
+
+		squad.setPath( map.getPath());
 
 		long lastTime = System.currentTimeMillis();
 		boolean run = true;
@@ -59,15 +63,12 @@ public class Model extends Thread{
 
 		Vector2D a = new Vector2D(5, 10);
 
-		Path path = map.getPath();
 
 		while (run) {
 			float dt = (float) (System.currentTimeMillis() - lastTime);
 
 			if (dt > updateInterval) {
-				for (Unit u : units) {
-					u.applyBehaviours(path, units);
-				}
+				squad.update();
 				
 				//System.out.println(System.currentTimeMillis());
 				for (Renderable r : renderables) {

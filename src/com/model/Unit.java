@@ -1,7 +1,5 @@
 package com.model;
 
-import java.util.Collection;
-
 import com.utility.Vector2D;
 import com.visualisation.Renderable;
 
@@ -13,8 +11,7 @@ public class Unit extends Renderable {
 	private float maxForce = 0.5f;
 	private float mass = 1;
 	private float radius = 8;
-//	private Collection<Unit> neighbours;
-
+	private Squad squad;
 	private float smoothedAngle;
 	private float smoothing = 5f;
 
@@ -29,6 +26,8 @@ public class Unit extends Renderable {
 
 	@Override
 	public void update() {
+		applyBehaviours();
+
 		velocity.add(acceleration);
 		velocity.limit(maxSpeed);
 		location.add(velocity);
@@ -89,8 +88,10 @@ public class Unit extends Renderable {
 	}
 
 	// Basic N.B. will need separate flocking methods
-	public Vector2D follow(Path p) {
-		Vector2D target = p.currentPoint();
+	public Vector2D follow() {
+		Path path = squad.getPath();
+
+		Vector2D target = path.currentPoint();
 
 		Vector2D dir = Vector2D.sub(target, location);
 		float dsq = dir.sqrMag();
@@ -98,24 +99,24 @@ public class Unit extends Renderable {
 		float stopD = getStoppingDist();
 
 		if (dsq < stopD * stopD) {
-			target = p.nextPoint();
+			target = path.nextPoint();
 		}
 
-		if (target == p.end()) {
+		if (target == path.end()) {
 			return arrive(target);
 		} else {
 			return seek(target);
 		}
 	}
 
-	public Vector2D separate(Collection<Unit> units) {
+	public Vector2D separate() {
 		// todo neigbour dist based on separation and radius
 		float desiredSeparation = 100;
 
 		Vector2D sum = new Vector2D();
 		int count = 0;
 
-		for (Unit u : units) {
+		for (Unit u : squad.getMembers()) {
 			Vector2D dir = Vector2D.sub(u.location, location);
 			float d = dir.mag();
 			if (d > 0 && d < desiredSeparation) {
@@ -138,12 +139,12 @@ public class Unit extends Renderable {
 		return new Vector2D();
 	}
 
-	public Vector2D cohesion(Collection<Unit> units) {
+	public Vector2D cohesion() {
 		float neighbourDist = 100;
 		Vector2D sum = new Vector2D();
 		int count = 0;
 
-		for (Unit u : units) {
+		for (Unit u : squad.getMembers()) {
 			Vector2D dir = Vector2D.sub(u.location, location);
 			float d = dir.mag();
 			if (d > 0 && d < neighbourDist) {
@@ -159,10 +160,10 @@ public class Unit extends Renderable {
 		}
 	}
 
-	public void applyBehaviours(Path p, Collection<Unit> units) {
-		Vector2D follow = follow(p);
-		Vector2D sep = separate(units);
-		Vector2D coh = cohesion(units);
+	public void applyBehaviours() {
+		Vector2D follow = follow();
+		Vector2D sep = separate();
+		Vector2D coh = cohesion();
 
 		follow.mult(1f);
 		sep.mult(1.9f);
@@ -177,8 +178,15 @@ public class Unit extends Renderable {
 
 		applyForce(force);
 
-//		neighbours = units;
 		// preventOverlap(units);
+	}
+
+	public Squad getSquad() {
+		return squad;
+	}
+
+	public void setSquad(Squad squad) {
+		this.squad = squad;
 	}
 
 	// public void preventOverlap(Collection<Unit> units) {
