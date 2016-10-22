@@ -1,7 +1,5 @@
 package com.model;
 
-import com.visualisation.Renderable;
-
 public class Soldier extends Unit implements IDamagable {
 
 	float curHealth;
@@ -23,7 +21,8 @@ public class Soldier extends Unit implements IDamagable {
 	public void onDie() {
 		// TODO Auto-generated method stub
 		//todo remove unit from squad on death
-		Model.getInstance().removeRenderable((Renderable) this);
 	}
+	
+	
 
 }

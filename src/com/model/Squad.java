@@ -3,37 +3,48 @@ package com.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Squad {
+import com.utility.RandomUtil;
+import com.utility.Vector2D;
 
-	private ArrayList<Unit> members;
+public class Squad<T extends Unit> {
+
+	private ArrayList<T> members;
 	private Path path;
-
-	@SafeVarargs
-	public Squad(Unit... _members) {
-		members = new ArrayList<>(Arrays.asList(_members));
-		setSquad();
-	}
 
 	public Squad() {
 		members = new ArrayList<>();
 	}
 
-	public Squad(ArrayList<Unit> _members) {
+	public Squad(ArrayList<T> _members) {
 		members = new ArrayList<>(_members);
 		setSquad();
 	}
 
-	public void addMembers(Unit... _members) {
+	@SuppressWarnings("unchecked")
+	public Squad(Class<T> unitType, int count, Vector2D location) {
+		members = new ArrayList<>();
+
+		for (int i = 0; i < count; i++) {
+			//spacing units out
+			Vector2D spawn = new Vector2D(RandomUtil.randFloatRange(0, 64), RandomUtil.randFloatRange(0, 64));
+			T m = (T) new Unit(spawn);
+
+			members.add(m);
+			m.setSquad(this);
+		}
+	}
+
+	public void addMembers(T... _members) {
 		members.addAll(Arrays.asList(_members));
 		setSquad();
 	}
 
-	public void removeMembers(Unit... _members) {
+	public void removeMembers(T... _members) {
 		members.removeAll(Arrays.asList(_members));
 	}
 
 	private void setSquad() {
-		for (Unit m : members) {
+		for (T m : members) {
 			m.setSquad(this);
 		}
 	}
@@ -46,12 +57,12 @@ public class Squad {
 		return path;
 	}
 
-	public ArrayList<Unit> getMembers() {
+	public ArrayList<T> getMembers() {
 		return members;
 	}
 
 	public void update() {
-		for (Unit m : members) {
+		for (T m : members) {
 			m.update();
 		}
 	}

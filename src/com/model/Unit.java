@@ -1,9 +1,11 @@
 package com.model;
 
+import java.util.ArrayList;
+
 import com.utility.Vector2D;
 import com.visualisation.Renderable;
 
-public class Unit extends Renderable {
+public class Unit extends Renderable implements Updateable {
 
 	private Vector2D velocity = new Vector2D();
 	private Vector2D acceleration = new Vector2D();
@@ -13,15 +15,16 @@ public class Unit extends Renderable {
 	private float radius = 8;
 	private Squad squad;
 	private float smoothedAngle;
-	private float smoothing = 6f;
+	private float smoothing = 5f;
 
 	public Unit(Vector2D pos) {
 		this();
 		location = pos;
+		registerUpdates();
 	}
 
 	public Unit() {
-		super(Layer.UNIT);
+		super("towerDefense_tile248.png", Layer.UNIT);
 	}
 
 	@Override
@@ -34,7 +37,6 @@ public class Unit extends Renderable {
 		acceleration.mult(0);
 
 		applyRotation();
-		// preventOverlap(neighbours);
 	}
 
 	private void applyRotation() {
@@ -91,6 +93,10 @@ public class Unit extends Renderable {
 	public Vector2D follow() {
 		Path path = squad.getPath();
 
+		if (path == null) {
+			return new Vector2D();
+		}
+
 		Vector2D target = path.currentPoint();
 
 		Vector2D dir = Vector2D.sub(target, location);
@@ -116,7 +122,9 @@ public class Unit extends Renderable {
 		Vector2D sum = new Vector2D();
 		int count = 0;
 
-		for (Unit u : squad.getMembers()) {
+		ArrayList<Unit> neighbours = squad.getMembers();
+
+		for (Unit u : neighbours) {
 			Vector2D dir = Vector2D.sub(u.location, location);
 			float d = dir.mag();
 			if (d > 0 && d < desiredSeparation) {
@@ -144,7 +152,9 @@ public class Unit extends Renderable {
 		Vector2D sum = new Vector2D();
 		int count = 0;
 
-		for (Unit u : squad.getMembers()) {
+		ArrayList<Unit> neighbours = squad.getMembers();
+
+		for (Unit u : neighbours) {
 			Vector2D dir = Vector2D.sub(u.location, location);
 			float d = dir.mag();
 			if (d > 0 && d < neighbourDist) {
@@ -177,8 +187,6 @@ public class Unit extends Renderable {
 		force.limit(maxForce);
 
 		applyForce(force);
-
-		// preventOverlap(units);
 	}
 
 	public Squad getSquad() {
@@ -188,18 +196,5 @@ public class Unit extends Renderable {
 	public void setSquad(Squad squad) {
 		this.squad = squad;
 	}
-
-	// public void preventOverlap(Collection<Unit> units) {
-	// for (Unit other : units) {
-	// Vector2D dir = Vector2D.sub(location, other.location);
-	// float dsq = dir.sqrMag();
-	// float minDist = radius + other.radius;
-	// if (dsq <= minDist * minDist) {
-	// dir.setMag(minDist);
-	// location.add(dir);
-	// }
-	//
-	// }
-	// }
 
 }

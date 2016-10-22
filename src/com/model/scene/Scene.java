@@ -1,31 +1,63 @@
 package com.model.scene;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 
+import com.model.Updateable;
 import com.visualisation.Renderable;
 
 public abstract class Scene {
+
 	protected PriorityQueue<Renderable> renderables = new PriorityQueue<>();
-	
-	public PriorityQueue<Renderable> getRenderables()
-	{
+	protected ArrayList<Updateable> updatables = new ArrayList<>();
+
+	public PriorityQueue<Renderable> getRenderables() {
 		return renderables;
 	}
-	
-	public abstract void update();
-	public void draw(Graphics2D g)
-	{
-		for(Renderable r : renderables)
-		{
+
+	public void onEnter() {
+
+	}
+
+	public void update() {
+		for (Updateable u : updatables) {
+			u.update();
+		}
+	}
+
+	public void draw(Graphics2D g) {
+		for (Renderable r : renderables) {
 			r.draw(g);
 		}
 	}
-	public abstract void onEnter();
-	public abstract void onExit();
-	
-	public void removeRenderable(Renderable r){
-		renderables.remove(r);
+
+	public void onExit() {
+
+	}
+
+	public void addRenderable(Renderable r) {
+		if (!renderables.contains(r)) {
+			renderables.add(r);
+		}
+	}
+
+	public void removeRenderable(Renderable r) {
+		if (renderables.contains(r)) {
+			renderables.remove(r);
+		}
+	}
+
+	public void addUpdatable(Updateable u) {
+		if (!updatables.contains(u)) {
+			updatables.add(u);
+		}
+	}
+
+	public void removedUpdatable(Updateable u) {
+		if (updatables.contains(u)) {
+			updatables.remove(u);
+		}
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.model.Model;
 import com.utility.Vector2D;
 
 public abstract class Renderable implements Comparable<Renderable> {
@@ -17,28 +18,37 @@ public abstract class Renderable implements Comparable<Renderable> {
 	protected Image image = null;
 	private float rotation = 0;
 	protected Layer zBuffer = Layer.GROUND;
-	
-	@Override
-	public int compareTo(Renderable other)
-	{
-		return zBuffer.compareTo(other.getZBuffer());
+	private String imagePath;
+
+	public Renderable(String _imagePath, Layer z) {
+		zBuffer = z;
+		imagePath = _imagePath;
+		setImage(imagePath);
+		Model.getInstance().getCurrentScene().addRenderable(this);
 	}
 
-	public Renderable(Layer z) {
-		zBuffer = z;
+	public void setImagePath(String _imagePath) {
+		imagePath = _imagePath;
+	}
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	@Override
+	public int compareTo(Renderable other) {
+		return zBuffer.compareTo(other.getZBuffer());
 	}
 
 	public Layer getZBuffer() {
 		return zBuffer;
 	}
-	
-	public float getRotation()
-	{
+
+	public float getRotation() {
 		return rotation;
 	}
-	
-	public void setRotation(float radians)
-	{
+
+	public void setRotation(float radians) {
 		rotation = radians;
 	}
 
@@ -60,22 +70,16 @@ public abstract class Renderable implements Comparable<Renderable> {
 		}
 		return image;
 	}
-	
-	public void draw(Graphics2D canvas)
-	{
+
+	public void draw(Graphics2D canvas) {
 		AffineTransform transform = new AffineTransform();
-		transform.rotate(getRotation(), location.x + (View.SCALE / 2), location.y + (View.SCALE / 2));;
+		transform.rotate(getRotation(), location.x + (View.SCALE / 2), location.y + (View.SCALE / 2));
+		;
 		transform.translate(location.x, location.y);
 		canvas.drawImage(getImage(), transform, View.getInstance().vp);
 	}
 
-	public abstract void update();
-	
-	public enum Layer
-	{
-		GROUND,
-		UNIT,
-		FX,
-		UI
+	public enum Layer {
+		GROUND, UNIT, FX, UI
 	}
 }

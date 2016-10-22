@@ -44,10 +44,6 @@ public class Model extends Thread{
 		return true;
 	}
 	
-	public void removeRenderable(Renderable r){
-		currentScene.removeRenderable(r);
-	}
-	
 	public void run() {
 		//Add Scenes
 		GameScene gs = new GameScene();

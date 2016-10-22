@@ -28,3 +28,10 @@ Where entry direction and exit direction is denoted by;
 1 : RIGHT
 2 : DOWN
 3 : LEFT
+
+WIP
+
+Over-hall of rendering pipeline
+Each renderable will contain render info (such as transform, Sprite etc.)
+On creation, renderable will add itself automatically to render queue
+on deletion? remove from queue
