@@ -93,6 +93,11 @@ public class Vector2D {
 		return c;
 	}
 
+	public static Vector2D mult(Vector2D a, float b) {
+		Vector2D c = new Vector2D(a.x * b, a.y * b);
+		return c;
+	}
+
 	public static Vector2D normalize(Vector2D a) {
 		Vector2D c = copy(a);
 		c.normalize();
