@@ -3,6 +3,7 @@ package com.visualisation;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
@@ -55,6 +56,11 @@ public class View extends JFrame {
 	public void addMouseListenerToPanel(MouseListener ml)
 	{
 		vp.addMouseListener(ml);
+	}
+	
+	public void addKeyListenerToPanel(KeyListener kl)
+	{
+		vp.addKeyListener(kl);
 	}
 }
 

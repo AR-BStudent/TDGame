@@ -5,6 +5,7 @@ import com.utility.Vector2D;
 
 public class Map {
 	Tile[][] tileMap;
+	int[][] buildingMap;
 	Path mapPath;
 
 	public Map(String fileName)
@@ -23,6 +24,30 @@ public class Map {
 	public Tile[][] getTileMap()
 	{
 		return tileMap;
+	}
+	
+	public void setBuildingMap(int[][] newMap)
+	{
+		buildingMap = newMap;
+	}
+	
+	//Used to remove a building from the tile map
+	public void remove(Vector2D gridLocation)
+	{
+		if(buildingMap[(int) gridLocation.x][(int) gridLocation.y] != -1)
+			buildingMap[(int) gridLocation.x][(int) gridLocation.y] = 0;
+	}
+	
+	public boolean place(Vector2D gridLocation, int buildingID)
+	{
+		if(gridLocation.x >= buildingMap.length || gridLocation.y >= buildingMap[0].length)
+			return false;
+		if(buildingMap[(int) gridLocation.x][(int) gridLocation.y] == 0)
+		{
+			buildingMap[(int) gridLocation.x][(int) gridLocation.y] = buildingID;
+			return true;
+		}
+		return false;
 	}
 	
 	public Path getPath()

@@ -14,6 +14,7 @@ import com.utility.event.MouseEnteredListener;
 import com.utility.event.MouseExitedListener;
 import com.utility.event.MousePressedListener;
 import com.utility.event.MouseReleasedListener;
+import com.visualisation.View;
 
 public class Controller implements KeyListener, MouseListener {
 
@@ -25,6 +26,12 @@ public class Controller implements KeyListener, MouseListener {
 			_instance = new Controller();
 		}
 		return _instance;
+	}
+	
+	private Controller()
+	{
+		View.getInstance().addMouseListenerToPanel(this);
+		View.getInstance().addKeyListenerToPanel(this);
 	}
 	
 	private ArrayList<MouseClickedListener> mouseClickedListeners = new ArrayList();

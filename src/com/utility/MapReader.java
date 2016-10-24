@@ -161,6 +161,17 @@ public class MapReader {
 			break;
 		}
 		map.setPath(pathPoints);
+		for(int[] row : intMap)
+		{
+			for(int i : row)
+			{
+				if(i != 0)
+				{
+					i = -1;
+				}
+			}
+		}
+		map.setBuildingMap(intMap);
 	}
 
 	enum TileType {
