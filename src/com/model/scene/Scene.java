@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 import com.model.Updateable;
+import com.ui.UIManager;
 import com.visualisation.Renderable;
 
 public abstract class Scene {
 
 	protected PriorityQueue<Renderable> renderables = new PriorityQueue<>();
 	protected ArrayList<Updateable> updatables = new ArrayList<>();
+	
+	UIManager uiManager = new UIManager();
 
 	public PriorityQueue<Renderable> getRenderables() {
 		return renderables;

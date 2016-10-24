@@ -3,10 +3,7 @@ package com.visualisation;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.geom.AffineTransform;
-import java.util.PriorityQueue;
+import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -27,6 +24,11 @@ public class View extends JFrame {
 
 	ViewPanel vp;
 	
+	public ViewPanel getViewPanel()
+	{
+		return vp;
+	}
+	
 	public static void main(String[] args)
 	{
 		Model.getInstance().start();
@@ -36,7 +38,7 @@ public class View extends JFrame {
 	{
 		super("Tower Defense Game");
 		
-		setSize(662, 696);
+		setSize(710, 680);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		vp = new ViewPanel();
 		add(vp);
@@ -49,6 +51,11 @@ public class View extends JFrame {
 	{
 		repaint();
 	}
+	
+	public void addMouseListenerToPanel(MouseListener ml)
+	{
+		vp.addMouseListener(ml);
+	}
 }
 
 class ViewPanel extends JPanel {
@@ -60,7 +67,7 @@ class ViewPanel extends JPanel {
 		Graphics2D spriteBatch = (Graphics2D)g;
 		
 		//Reset background
-		spriteBatch.setColor(Color.PINK);
+		spriteBatch.setColor(Color.BLACK);
 		spriteBatch.fillRect(0, 0, getSize().width, getSize().height);
 		Model.getInstance().getCurrentScene().draw(spriteBatch);
 	}

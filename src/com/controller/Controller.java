@@ -17,6 +17,16 @@ import com.utility.event.MouseReleasedListener;
 
 public class Controller implements KeyListener, MouseListener {
 
+	private static Controller _instance;
+	public static Controller getInstance()
+	{
+		if(_instance == null)
+		{
+			_instance = new Controller();
+		}
+		return _instance;
+	}
+	
 	private ArrayList<MouseClickedListener> mouseClickedListeners = new ArrayList();
 
 	public void addMouseClickedListener(MouseClickedListener newListener) {
