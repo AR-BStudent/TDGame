@@ -89,31 +89,79 @@ public class Unit extends Renderable implements Updateable {
 		return (float) Math.atan2(velocity.y, velocity.x);
 	}
 
-	// Basic N.B. will need separate flocking methods
-	public Vector2D follow() {
-		Path path = squad.getPath();
+	public Vector2D follow(Path p) {
+		Vector2D predict = velocity.copy();
+		predict.normalize();
+		predict.mult(50);
+		Vector2D predictPos = Vector2D.add(location, predict);
 
-		if (path == null) {
+		Vector2D target = null;
+
+		float worldRecord = 9999999999f;
+
+		for (int i = 0; i < p.points.size() - 1; i++) {
+			Vector2D a = p.points.get(i);
+			Vector2D b = p.points.get(i + 1);
+
+			Vector2D normalPoint = getNormalPoint(predictPos, a, b);
+
+			if (normalPoint.x < Math.min(a.x, b.x) || normalPoint.x > Math.max(a.x, b.x)) {
+				normalPoint = b.copy();
+			}
+
+			float distance = Vector2D.dist(predictPos, normalPoint);
+
+			if (distance < worldRecord) {
+				worldRecord = distance;
+				Vector2D dir = Vector2D.sub(b, a);
+				dir.normalize();
+				dir.mult(10);
+				target = normalPoint.copy();
+				target.add(dir);
+			}
+		}
+
+		if (worldRecord > p.radius) {
+			return seek(target);
+		} else {
 			return new Vector2D();
 		}
-
-		Vector2D target = path.currentPoint();
-
-		Vector2D dir = Vector2D.sub(target, location);
-		float dsq = dir.sqrMag();
-
-		float stopD = getStoppingDist();
-
-		if (dsq < stopD * stopD) {
-			target = path.nextPoint();
-		}
-
-		if (target == path.end()) {
-			return arrive(target);
-		} else {
-			return seek(target);
-		}
 	}
+
+	private Vector2D getNormalPoint(Vector2D p, Vector2D a, Vector2D b) {
+		Vector2D ap = Vector2D.sub(p, a);
+		Vector2D ab = Vector2D.sub(b, a);
+		ab.normalize();
+		ab.mult(ap.dot(ab));
+		Vector2D normalPoint = Vector2D.add(a, ab);
+		return normalPoint;
+	}
+
+	// Basic N.B. will need separate flocking methods
+	// public Vector2D follow() {
+	// Path path = squad.getPath();
+	//
+	// if (path == null) {
+	// return new Vector2D();
+	// }
+	//
+	// Vector2D target = path.currentPoint();
+	//
+	// Vector2D dir = Vector2D.sub(target, location);
+	// float dsq = dir.sqrMag();
+	//
+	// float stopD = getStoppingDist();
+	//
+	// if (dsq < stopD * stopD) {
+	// target = path.nextPoint();
+	// }
+	//
+	// if (target == path.end()) {
+	// return arrive(target);
+	// } else {
+	// return seek(target);
+	// }
+	// }
 
 	public Vector2D separate() {
 		// todo neigbour dist based on separation and radius
@@ -171,7 +219,7 @@ public class Unit extends Renderable implements Updateable {
 	}
 
 	public void applyBehaviours() {
-		Vector2D follow = follow();
+		Vector2D follow = follow(squad.getPath());
 		Vector2D sep = separate();
 		Vector2D coh = cohesion();
 
@@ -181,8 +229,8 @@ public class Unit extends Renderable implements Updateable {
 
 		Vector2D force = new Vector2D();
 		force.add(follow);
-		force.add(sep);
-		force.add(coh);
+		// force.add(sep);
+		// force.add(coh);
 
 		force.limit(maxForce);
 

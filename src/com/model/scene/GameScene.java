@@ -3,6 +3,7 @@ package com.model.scene;
 import com.controller.Player;
 import com.model.Building;
 import com.model.Map;
+import com.model.Path;
 import com.model.Squad;
 import com.model.Unit;
 import com.ui.UIButton;
@@ -19,8 +20,21 @@ public class GameScene extends Scene {
 		// map is a collection of tiles, which are renderable, so no need to add
 		// to render queue manually
 		map = new Map("map_02.txt");
-		squad = new Squad<>(Unit.class, 20, new Vector2D(500, 500));
-		squad.setPath(map.getPath());
+
+		squad = new Squad<>(Unit.class, 1, new Vector2D(500, 500));
+		squad.setPath(map.getPath());		
+		
+//		Path p = new Path();
+//		p.addPoints(
+//				new Vector2D(0, 0),
+//				new Vector2D(100, 0),
+//				new Vector2D(200, 0),
+//				new Vector2D(300, 400),
+//				new Vector2D(0, 400)
+//				
+//				);
+		
+//		squad.setPath(p);
 		
 		//SETUP UI
 		FunctionalInterface func;
