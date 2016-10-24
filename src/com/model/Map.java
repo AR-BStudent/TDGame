@@ -1,5 +1,7 @@
 package com.model;
 
+import java.util.ArrayList;
+
 import com.utility.MapReader;
 import com.utility.Vector2D;
 
@@ -13,7 +15,7 @@ public class Map {
 		//Load in from a file
 		//For now...
 		mapPath = new Path();
-		MapReader.setMap(fileName, this);
+		MapReader.getInstance().loadMap(fileName, this);
 	}
 	
 	public void setTileMap(Tile[][] newMap)
@@ -59,5 +61,11 @@ public class Map {
 	{
 		mapPath.clear();
 		mapPath.addPoints(points);
+	}
+	
+	public void setPath(ArrayList<Vector2D> points)
+	{
+		mapPath.clear();
+		mapPath.addAll(points);
 	}
 }

@@ -9,8 +9,8 @@ public class Unit extends Renderable implements Updateable {
 
 	private Vector2D velocity = new Vector2D();
 	private Vector2D acceleration = new Vector2D();
-	private float maxSpeed = 6;
-	private float maxForce = 0.5f;
+	private float maxSpeed = 1f;
+	private float maxForce = 1f;
 	private float mass = 1;
 	private float radius = 8;
 	private Squad squad;
@@ -92,7 +92,7 @@ public class Unit extends Renderable implements Updateable {
 	public Vector2D follow(Path p) {
 		Vector2D predict = velocity.copy();
 		predict.normalize();
-		predict.mult(50);
+		predict.mult(10);
 		Vector2D predictPos = Vector2D.add(location, predict);
 
 		Vector2D target = null;
@@ -105,7 +105,8 @@ public class Unit extends Renderable implements Updateable {
 
 			Vector2D normalPoint = getNormalPoint(predictPos, a, b);
 
-			if (normalPoint.x < Math.min(a.x, b.x) || normalPoint.x > Math.max(a.x, b.x)) {
+			if (normalPoint.x < Math.min(a.x, b.x) || normalPoint.x > Math.max(a.x, b.x) 
+				|| normalPoint.y < Math.min(a.y, b.y) || normalPoint.y > Math.max(a.y, b.y)) {
 				normalPoint = b.copy();
 			}
 
@@ -223,14 +224,14 @@ public class Unit extends Renderable implements Updateable {
 		Vector2D sep = separate();
 		Vector2D coh = cohesion();
 
-		follow.mult(1f);
-		sep.mult(1.9f);
+		follow.mult(30f);
+		sep.mult(0.5f);
 		coh.mult(1f);
 
 		Vector2D force = new Vector2D();
 		force.add(follow);
-		// force.add(sep);
-		// force.add(coh);
+//		force.add(sep);
+//		force.add(coh);
 
 		force.limit(maxForce);
 

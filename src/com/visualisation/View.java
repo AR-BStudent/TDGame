@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.model.Model;
+import com.model.Path;
 
 
 public class View extends JFrame {
@@ -62,9 +63,16 @@ public class View extends JFrame {
 	{
 		vp.addKeyListener(kl);
 	}
+	
+	public void addPathForDebug(Path p)
+	{
+		vp.debugPath = p;
+	}
 }
 
 class ViewPanel extends JPanel {
+	
+	Path debugPath;
 	
 	public void paintComponent(Graphics g)
 	{
@@ -76,5 +84,9 @@ class ViewPanel extends JPanel {
 		spriteBatch.setColor(Color.BLACK);
 		spriteBatch.fillRect(0, 0, getSize().width, getSize().height);
 		Model.getInstance().getCurrentScene().draw(spriteBatch);
+		if(debugPath != null)
+		{
+			debugPath.debugDraw(spriteBatch);
+		}
 	}
 }

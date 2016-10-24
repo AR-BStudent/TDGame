@@ -8,6 +8,7 @@ import com.model.Squad;
 import com.model.Unit;
 import com.ui.UIButton;
 import com.utility.Vector2D;
+import com.visualisation.View;
 
 public class GameScene extends Scene {
 
@@ -21,8 +22,9 @@ public class GameScene extends Scene {
 		// to render queue manually
 		map = new Map("map_02.txt");
 
-		squad = new Squad<>(Unit.class, 1, new Vector2D(500, 500));
-		squad.setPath(map.getPath());		
+		squad = new Squad<>(Unit.class, 10, new Vector2D(32,-32));
+		squad.setPath(map.getPath());
+		View.getInstance().addPathForDebug(map.getPath());
 		
 //		Path p = new Path();
 //		p.addPoints(

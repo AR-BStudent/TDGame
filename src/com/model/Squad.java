@@ -27,7 +27,7 @@ public class Squad<T extends Unit> {
 		for (int i = 0; i < count; i++) {
 			//spacing units out
 			Vector2D spawn = new Vector2D(RandomUtil.randFloatRange(0, 64), RandomUtil.randFloatRange(0, 64));
-			T m = (T) new Unit(spawn);
+			T m = (T) new Unit(new Vector2D(0,0));
 
 			members.add(m);
 			m.setSquad(this);

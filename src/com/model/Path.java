@@ -1,5 +1,6 @@
 package com.model;
 
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -8,10 +9,15 @@ import com.utility.Vector2D;
 public class Path {
 
 	public ArrayList<Vector2D> points = new ArrayList<>();
-	public float radius = 32;
+	public float radius = 1f;
 
 	public void addPoints(Vector2D... p) {
 		points.addAll(Arrays.asList(p));
+	}
+	
+	public void addAll(ArrayList<Vector2D> points)
+	{
+		this.points.addAll(points);
 	}
 
 	public void clear() {
@@ -24,6 +30,11 @@ public class Path {
 
 	public Vector2D getEnd() {
 		return points.get(points.size() - 1);
-	}	
+	}
 
+	public void debugDraw(Graphics2D g) {
+		for (int i = 0; i < points.size() - 1; i++) {
+			g.drawLine((int)points.get(i).x, (int)points.get(i).y, (int)points.get(i + 1).x, (int)points.get(i + 1).y);
+		}
+	}
 }

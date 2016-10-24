@@ -12,13 +12,36 @@ import com.visualisation.Renderable;
 import com.visualisation.View;
 
 public class MapReader {
+	private static MapReader _instance;
 
-	private static ArrayList<String> readMapFile(String filePath) throws IOException {
-		Path path = Paths.get(filePath);
-		return (ArrayList<String>) Files.readAllLines(path);
+	public static MapReader getInstance() {
+		if (_instance == null) {
+			_instance = new MapReader();
+		}
+		return _instance;
 	}
 
-	public static void setMap(String mapName, Map map) {
+	private MapReader() {
+	}
+
+	int[] flags = new int[] { 0B0001, // NORTH
+			0B0010, // EAST
+			0B0100, // SOUTH
+			0B1000 // WEST
+	};
+
+	int entryDir = 0, exitDir = 0, pathSize = 0;
+	
+	public void loadMap(String mapName, Map map) {
+		int entryDir = 0, exitDir = 0, pathSize = 0;
+		int[][] parsedMap = parseFile(mapName);
+		TileType[][] typedMap = getTypedMap(parsedMap);
+		map.setPath(loadPath(typedMap, parsedMap));
+		map.setTileMap(createTiles(typedMap));
+		map.setBuildingMap(createBuildingMap(parsedMap));
+	}
+
+	private int[][] parseFile(String mapName) {
 		ArrayList<String> fileLines = null;
 		try {
 			fileLines = readMapFile("maps/" + mapName);
@@ -31,147 +54,176 @@ public class MapReader {
 		String[] split = widthHeight.split(",");
 		int width = Integer.parseInt(split[0]);
 		int height = Integer.parseInt(split[1]);
-		int[][] intMap = new int[width][height];
-		int pathSize = 0;
 		// Get the tile info
-		for (int y = 0; y < height; y++) {
-			String line = fileLines.get(y + 1);
+		int[][] intMap = new int[width][height];
+		for (int x = 0; x < width; x++) {
+			String line = fileLines.get(x + 1);
 			String[] tiles = line.split(",");
-			for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
 				// Go through, check to see if the tile needs to be a part of
 				// the path
-				intMap[x][y] = Integer.parseInt(tiles[x]);
+				intMap[x][y] = Integer.parseInt(tiles[y]);
 				if (intMap[x][y] > pathSize) {
 					pathSize = intMap[x][y];
 				}
 			}
 		}
 
-		// Get entry/exit direction
 		split = fileLines.get(height + 1).split(",");
-		int entryDirection = Integer.parseInt(split[0]);
-		int exitDirection = Integer.parseInt(split[1]);
+		// TODO: Test, is passed in by reference??
+		entryDir = Integer.parseInt(split[0]);
+		exitDir = Integer.parseInt(split[1]);
 
-		// System.out.println("entryDir = " + entryDirection + ", exitDir = " +
-		// exitDirection);
-		// Add 2 to path size to allow for a prior and post positioning
-		Vector2D[] pathPoints = new Vector2D[pathSize + 2];
+		return intMap;
+	}
 
-		Tile[][] newMap = new Tile[width][height];
-		int[] flags = new int[] { 0B0001, // UP
-				0B0010, // RIGHT
-				0B0100, // DOWN
-				0B1000 // LEFT
-		};
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
+	private ArrayList<String> readMapFile(String filePath) throws IOException {
+		Path path = Paths.get(filePath);
+		return (ArrayList<String>) Files.readAllLines(path);
+	}
 
-				Vector2D tileLocation = new Vector2D(x, y).mult(View.SCALE);
-
-				if (intMap[x][y] == 0) {
-					newMap[x][y] = new Tile(associatedFileName(TileType.NONE), Renderable.Layer.GROUND, tileLocation);
-					continue;
-				}
-
-				Vector2D vec = new Vector2D(x, y).mult(View.SCALE);
-				pathPoints[intMap[x][y]] = vec;
-
+	private TileType[][] getTypedMap(int[][] parsedMap) {
+		int width = parsedMap.length;
+		int height = parsedMap[0].length;
+		TileType[][] typedMap = new TileType[width][height];
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
 				int flag = 0;
 
+				if(parsedMap[x][y] == 0)
+				{
+					typedMap[x][y] = TileType.NONE;
+					continue;
+				}
+				
+				//NORTH
 				if (y < height - 1) {
-					if (intMap[x][y + 1] != 0)
+					if (parsedMap[x][y + 1] != 0)
 						flag |= flags[2];
 				}
+				//SOUTH
 				if (y != 0) {
-					if (intMap[x][y - 1] != 0)
+					if (parsedMap[x][y - 1] != 0)
 						flag |= flags[0];
 				}
+				//EAST
 				if (x < width - 1) {
-					if (intMap[x + 1][y] != 0)
+					if (parsedMap[x + 1][y] != 0)
 						flag |= flags[1];
 				}
+				//WEST
 				if (x != 0) {
-					if (intMap[x - 1][y] != 0) {
+					if (parsedMap[x - 1][y] != 0) {
 						flag |= flags[3];
 					}
 				}
 
-				if (intMap[x][y] == 1) {
-					flag |= flags[entryDirection];
-				} else if (intMap[x][y] == pathSize) {
-					flag |= flags[exitDirection];
-				}
-				String name = "NONE";
-
-				switch (flag) {
-				case 0b0011:
-					name = associatedFileName(TileType.NORTH_EAST);
-					break;
-				case 0b0101:
-					name = associatedFileName(TileType.NORTH_SOUTH);
-					break;
-				case 0b1001:
-					name = associatedFileName(TileType.WEST_NORTH);
-					break;
-				case 0b0110:
-					name = associatedFileName(TileType.EAST_SOUTH);
-					break;
-				case 0b1010:
-					name = associatedFileName(TileType.WEST_EAST);
-					break;
-				case 0b1100:
-					name = associatedFileName(TileType.SOUTH_WEST);
-					break;
-				default:
-					System.out.println("ERROR: No appropriate tile type found for tile [" + x + "," + y + "]");
-					System.out.println("This will be shown as a 'NONE' type. Fix this.");
-					name = "none.png";
+				if (parsedMap[x][y] == 1) {
+					flag |= flags[entryDir];
+				} else if (parsedMap[x][y] == pathSize) {
+					flag |= flags[exitDir];
 				}
 
-				newMap[x][y] = new Tile(name, Renderable.Layer.GROUND, tileLocation);
+				typedMap[x][y] = getTileType(flag);
 			}
 		}
-		map.setTileMap(newMap);
-		switch (entryDirection) {
-		case 0:
-			pathPoints[0] = Vector2D.sub(pathPoints[1], new Vector2D(0, View.SCALE));
-			break;
-		case 1:
-			pathPoints[0] = Vector2D.sub(pathPoints[1], new Vector2D(View.SCALE, 0));
-			break;
-		case 2:
-			pathPoints[0] = Vector2D.sub(pathPoints[1], new Vector2D(0, -View.SCALE));
-			break;
-		case 3:
-			pathPoints[0] = Vector2D.sub(pathPoints[1], new Vector2D(-View.SCALE, 0));
-			break;
+		return typedMap;
+	}
+
+	private TileType getTileType(int flag) {
+		switch (flag) {
+		case 0b0011:
+			return TileType.NORTH_EAST;
+		case 0b0101:
+			return TileType.NORTH_SOUTH;
+		case 0b1001:
+			return TileType.WEST_NORTH;
+		case 0b0110:
+			return TileType.EAST_SOUTH;
+		case 0b1010:
+			return TileType.WEST_EAST;
+		case 0b1100:
+			return TileType.SOUTH_WEST;
+		default:
+			System.out.println("ERROR: No appropriate tile type found for tile.");
+			System.out.println("This will be shown as a 'NONE' type. Fix this.");
+			return TileType.NONE;
 		}
-		switch (exitDirection) {
-		case 0:
-			pathPoints[pathSize + 1] = Vector2D.sub(pathPoints[pathSize], new Vector2D(0, View.SCALE));
-			break;
-		case 1:
-			pathPoints[pathSize + 1] = Vector2D.sub(pathPoints[pathSize], new Vector2D(View.SCALE, 0));
-			break;
-		case 2:
-			pathPoints[pathSize + 1] = Vector2D.sub(pathPoints[pathSize], new Vector2D(0, -View.SCALE));
-			break;
-		case 3:
-			pathPoints[pathSize + 1] = Vector2D.sub(pathPoints[pathSize], new Vector2D(-View.SCALE, 0));
-			break;
-		}
-		map.setPath(pathPoints);
-		for(int[] row : intMap)
+	}
+
+	private ArrayList<Vector2D> loadPath(TileType[][] typeMap, int[][] parsedMap) {
+		ArrayList<Vector2D> orderedPoints = getOrderedPathVectors(parsedMap);
+		ArrayList<Vector2D> pathPoints = new ArrayList<>();
+
+		Vector2D prevLocation = new Vector2D(0,0);
+		Vector2D prevPrevLocation = new Vector2D(0,0);
+		Vector2D viewOffset = new Vector2D(View.SCALE/2, View.SCALE/2);
+		pathPoints.add(Vector2D.add(orderedPoints.get(0), viewOffset));
+		for(Vector2D point : orderedPoints)
 		{
-			for(int i : row)
+			point.mult(View.SCALE);
+			Vector2D dif = Vector2D.sub(prevPrevLocation, point);
+			if(dif.x != 0 && dif.y != 0)
 			{
-				if(i != 0)
-				{
+				//Add new points - half way between prevprev and prev, and half way between prev and current
+				Vector2D prevPrevToPrev = Vector2D.add(prevPrevLocation,Vector2D.sub(prevLocation, prevPrevLocation).div(2));
+				Vector2D prevToCurrent = Vector2D.add(prevLocation,Vector2D.sub(point, prevLocation).div(2));
+				pathPoints.add(Vector2D.add(prevPrevToPrev, viewOffset));
+				pathPoints.add(Vector2D.add(prevToCurrent, viewOffset));
+			}
+			prevPrevLocation = prevLocation;
+			prevLocation = point;
+		}
+		
+		pathPoints.add(Vector2D.add(orderedPoints.get(orderedPoints.size()-1), viewOffset));
+
+		return pathPoints;
+	}
+
+	private ArrayList<Vector2D> getOrderedPathVectors(int[][] parsedMap) {
+		ArrayList<Vector2D> orderedPoints = new ArrayList<>();
+		orderedPoints.ensureCapacity(pathSize);
+		for(int i = 0; i < pathSize; i++)
+		{
+			orderedPoints.add(new Vector2D());
+		}
+		for (int x = 0; x < parsedMap.length; x++) {
+			for (int y = 0; y < parsedMap[x].length; y++) {
+				if (parsedMap[x][y] != 0) {
+					orderedPoints.set(parsedMap[x][y] - 1, new Vector2D(x, y));
+				}
+			}
+		}
+		return orderedPoints;
+	}
+
+	private Tile[][] createTiles(TileType[][] typedMap) {
+		Tile[][] tileMap = new Tile[typedMap.length][typedMap[0].length];
+		for (int x = 0; x < typedMap.length; x++) {
+			for (int y = 0; y < typedMap[x].length; y++) {
+				tileMap[x][y] = new Tile(associatedFileName(typedMap[x][y]), Renderable.Layer.GROUND,
+						getTileLocation(x, y));
+			}
+		}
+
+		return tileMap;
+	}
+
+	// Returns the screen position of the tile
+	private Vector2D getTileLocation(int x, int y) {
+		return new Vector2D(x, y).mult(View.SCALE);
+	}
+
+	private int[][] createBuildingMap(int[][] parsedMap) {
+		int[][] buildingMap = parsedMap;
+		for (int[] row : buildingMap) {
+			for (int i : row) {
+				if (i != 0) {
 					i = -1;
 				}
 			}
 		}
-		map.setBuildingMap(intMap);
+		return buildingMap;
 	}
 
 	enum TileType {
