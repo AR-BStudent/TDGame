@@ -36,7 +36,7 @@ public class MapReader {
 		int entryDir = 0, exitDir = 0, pathSize = 0;
 		int[][] parsedMap = parseFile(mapName);
 		TileType[][] typedMap = getTypedMap(parsedMap);
-		map.setPath(loadPath(typedMap, parsedMap));
+		map.setPath(loadPath(parsedMap));
 		map.setTileMap(createTiles(typedMap));
 		map.setBuildingMap(createBuildingMap(parsedMap));
 	}
@@ -151,7 +151,7 @@ public class MapReader {
 		}
 	}
 
-	private ArrayList<Vector2D> loadPath(TileType[][] typeMap, int[][] parsedMap) {
+	private ArrayList<Vector2D> loadPath(int[][] parsedMap) {
 		ArrayList<Vector2D> orderedPoints = getOrderedPathVectors(parsedMap);
 		ArrayList<Vector2D> pathPoints = new ArrayList<>();
 
