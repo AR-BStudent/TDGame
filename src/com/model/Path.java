@@ -1,48 +1,29 @@
 package com.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.utility.Vector2D;
 
 public class Path {
 
-	public float radius = 10;
-	private ArrayList<Vector2D> points;
-	private int currentPoint = 0;
+	public ArrayList<Vector2D> points = new ArrayList<>();
+	public float radius = 32;
 
-	public Path() {
-		points = new ArrayList<>();
-	}
-
-	public Path(Vector2D... points) {
-		this();
-		addPoints(points);
-	}
-
-	public void addPoints(Vector2D... points) {
-		for (Vector2D p : points) {
-			this.points.add(p);
-		}
+	public void addPoints(Vector2D... p) {
+		points.addAll(Arrays.asList(p));
 	}
 
 	public void clear() {
 		points.clear();
 	}
 
-	public Vector2D currentPoint() {
-		return points.get(currentPoint);
+	public Vector2D getStart() {
+		return points.get(0);
 	}
 
-	public Vector2D nextPoint() {
-		if (currentPoint < points.size() - 1) {
-			currentPoint++;
-			return points.get(currentPoint);
-		} else {
-			return points.get(points.size() - 1);
-		}
-	}
-
-	public Vector2D end() {
+	public Vector2D getEnd() {
 		return points.get(points.size() - 1);
-	}
+	}	
 
 }
