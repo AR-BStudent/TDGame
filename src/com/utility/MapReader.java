@@ -56,13 +56,13 @@ public class MapReader {
 		int height = Integer.parseInt(split[1]);
 		// Get the tile info
 		int[][] intMap = new int[width][height];
-		for (int x = 0; x < width; x++) {
-			String line = fileLines.get(x + 1);
+		for (int y = 0; y < height; y++) {
+			String line = fileLines.get(y + 1);
 			String[] tiles = line.split(",");
-			for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
 				// Go through, check to see if the tile needs to be a part of
 				// the path
-				intMap[x][y] = Integer.parseInt(tiles[y]);
+				intMap[x][y] = Integer.parseInt(tiles[x]);
 				if (intMap[x][y] > pathSize) {
 					pathSize = intMap[x][y];
 				}
@@ -191,23 +191,23 @@ public class MapReader {
 		switch(exitDir)
 		{
 		case 0:
-			exit = Vector2D.add(orderedPoints.get(orderedPoints.size() - 1), new Vector2D(0, 1)); 
-			break;
-		case 1:
-			exit = Vector2D.add(orderedPoints.get(orderedPoints.size() - 1), new Vector2D(1, 0)); 
-			break;
-		case 2:
 			exit = Vector2D.add(orderedPoints.get(orderedPoints.size() - 1), new Vector2D(0, -1)); 
 			break;
-		case 3:
+		case 1:
 			exit = Vector2D.add(orderedPoints.get(orderedPoints.size() - 1), new Vector2D(-1, 0)); 
+			break;
+		case 2:
+			exit = Vector2D.add(orderedPoints.get(orderedPoints.size() - 1), new Vector2D(0, 1)); 
+			break;
+		case 3:
+			exit = Vector2D.add(orderedPoints.get(orderedPoints.size() - 1), new Vector2D(1, 0)); 
 			break;
 		}
 		exit = Vector2D.mult(exit, View.SCALE).add(viewOffset);
 		Vector2D point = Vector2D.mult(orderedPoints.get(orderedPoints.size()-1), View.SCALE).add(viewOffset);
 		pathPoints.addAll(getTileControlPoints(entry, point, exit));
 		
-		BezierPath bp = new BezierPath(pathPoints, 10);
+		BezierPath bp = new BezierPath(pathPoints, 12);
 		return bp.getPath();
 	}
 	
