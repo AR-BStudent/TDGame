@@ -74,8 +74,7 @@ public abstract class Renderable implements Comparable<Renderable> {
 	public void draw(Graphics2D canvas) {
 		AffineTransform transform = new AffineTransform();
 		transform.rotate(getRotation(), location.x + (View.SCALE / 2), location.y + (View.SCALE / 2));
-		;
-		transform.translate(location.x, location.y);
+		transform.translate(location.x * View.SCALE, location.y * View.SCALE);
 		canvas.drawImage(getImage(), transform, View.getInstance().vp);
 	}
 

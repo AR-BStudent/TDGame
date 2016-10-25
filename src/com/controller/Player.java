@@ -33,7 +33,7 @@ public class Player implements MouseClickedListener {
 	@Override
 	public void mouseClicked(MouseEvent event) {
 		Vector2D position = new Vector2D(event.getX(), event.getY());
-		position.div(View.SCALE);
+		position = View.getInstance().viewToModel(position);
 		position = new Vector2D((int)position.x, (int)position.y);
 		System.out.println("Placing building at " + position.toString());
 		

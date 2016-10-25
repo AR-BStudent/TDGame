@@ -154,8 +154,7 @@ public class MapReader {
 	private ArrayList<Vector2D> loadPath(int[][] parsedMap) {
 		ArrayList<Vector2D> orderedPoints = getOrderedPathVectors(parsedMap);
 		ArrayList<Vector2D> pathPoints = new ArrayList<>();
-
-		Vector2D viewOffset = new Vector2D(View.SCALE/2, View.SCALE/2);
+		Vector2D offset = new Vector2D(0.5f, 0.5f);
 		//TODO: Use entry dir to evaluate prevPoint
 		Vector2D entry = new Vector2D(0,0);
 		switch(entryDir)
@@ -173,17 +172,15 @@ public class MapReader {
 			entry = Vector2D.add(orderedPoints.get(0), new Vector2D(1, 0)); 
 			break;
 		}
-		entry = Vector2D.mult(entry, View.SCALE).add(viewOffset);
+		entry = Vector2D.add(entry, offset);
 		Vector2D exit = new Vector2D(0,0);
-		
 		for(int i = 0; i < orderedPoints.size() - 1; i++)
 		{
 			Vector2D point = orderedPoints.get(i);
+			point = Vector2D.add(point, offset);
 			exit = orderedPoints.get(i+1);
-			point = Vector2D.mult(point, View.SCALE).add(viewOffset);
-			exit = Vector2D.mult(exit, View.SCALE).add(viewOffset);
+			exit = Vector2D.add(exit, offset);
 			pathPoints.addAll(getTileControlPoints(entry, point, exit));
-			
 			entry = point;
 		}
 		
@@ -203,8 +200,9 @@ public class MapReader {
 			exit = Vector2D.add(orderedPoints.get(orderedPoints.size() - 1), new Vector2D(1, 0)); 
 			break;
 		}
-		exit = Vector2D.mult(exit, View.SCALE).add(viewOffset);
-		Vector2D point = Vector2D.mult(orderedPoints.get(orderedPoints.size()-1), View.SCALE).add(viewOffset);
+		exit = Vector2D.add(exit, offset);
+		Vector2D point = orderedPoints.get(orderedPoints.size()-1);
+		point = Vector2D.add(point, offset);
 		pathPoints.addAll(getTileControlPoints(entry, point, exit));
 		
 		BezierPath bp = new BezierPath(pathPoints, 12);
@@ -256,7 +254,7 @@ public class MapReader {
 
 	// Returns the screen position of the tile
 	private Vector2D getTileLocation(int x, int y) {
-		return new Vector2D(x, y).mult(View.SCALE);
+		return new Vector2D(x, y);
 	}
 
 	private int[][] createBuildingMap(int[][] parsedMap) {

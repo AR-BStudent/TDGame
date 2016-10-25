@@ -10,7 +10,7 @@ public abstract class Building extends Renderable {
 	public Building(String _imagePath, Vector2D gridLocation) {
 		super(_imagePath, Layer.UNIT);
 		this.gridLocation = gridLocation;
-		location = new Vector2D(gridLocation.x, gridLocation.y).mult(View.SCALE);
+		location = new Vector2D(gridLocation.x, gridLocation.y);
 	}
 	
 	protected Vector2D gridLocation;

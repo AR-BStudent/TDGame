@@ -1,9 +1,12 @@
 package com.ui;
 
+import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 
 import com.utility.Vector2D;
 import com.visualisation.Renderable;
+import com.visualisation.View;
 
 public abstract class UIObject extends Renderable {
 
@@ -62,5 +65,14 @@ public abstract class UIObject extends Renderable {
 
 	public boolean mouseReleased(MouseEvent event) {
 		return false;
+	}
+	
+	@Override
+	public void draw(Graphics2D canvas) 
+	{
+		AffineTransform transform = new AffineTransform();
+		transform.rotate(getRotation(), location.x, location.y);
+		transform.translate(location.x, location.y);
+		canvas.drawImage(getImage(), transform, View.getInstance().getViewPanel());
 	}
 }

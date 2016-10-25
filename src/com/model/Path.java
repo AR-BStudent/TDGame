@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.utility.Vector2D;
+import com.visualisation.View;
 
 public class Path {
 
@@ -34,7 +35,9 @@ public class Path {
 
 	public void debugDraw(Graphics2D g) {
 		for (int i = 0; i < points.size() - 1; i++) {
-			g.drawLine((int)points.get(i).x, (int)points.get(i).y, (int)points.get(i + 1).x, (int)points.get(i + 1).y);
+			Vector2D point = Vector2D.mult(points.get(i), View.SCALE);
+			Vector2D point2 = Vector2D.mult(points.get(i + 1), View.SCALE);
+			g.drawLine((int)point.x, (int)point.y, (int)point2.x, (int)point2.y);
 		}
 	}
 }

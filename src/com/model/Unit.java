@@ -9,8 +9,8 @@ public class Unit extends Renderable implements Updateable {
 
 	private Vector2D velocity = new Vector2D();
 	private Vector2D acceleration = new Vector2D();
-	private float maxSpeed = 1f;
-	private float maxForce = 1f;
+	private float maxSpeed = 0.01f;
+	private float maxForce = 0.01f;
 	private float mass = 1;
 	private float radius = 8;
 	private Squad squad;

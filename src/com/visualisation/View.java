@@ -65,6 +65,16 @@ public class View extends JFrame {
 	public void addPathForDebug(Path p) {
 		vp.debugPath = p;
 	}
+	
+	public Vector2D viewToModel(Vector2D screenCoords)
+	{
+		return Vector2D.div(screenCoords, View.SCALE);
+	}
+	
+	public Vector2D modelToView(Vector2D worldCoords)
+	{
+		return Vector2D.mult(worldCoords, View.SCALE);
+	}
 }
 
 class ViewPanel extends JPanel {
