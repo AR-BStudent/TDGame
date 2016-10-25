@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 
 import com.model.Model;
 import com.model.Path;
+import com.model.scene.GameScene;
 import com.utility.BezierPath;
 import com.utility.Vector2D;
 
@@ -82,24 +83,6 @@ class ViewPanel extends JPanel {
 		if (debugPath != null) {
 			debugPath.debugDraw(spriteBatch);
 		}
-		// Bezier test
-		ArrayList<Vector2D> cp = new ArrayList<>();
-		cp.add(new Vector2D(1, 1));
-		cp.add(new Vector2D(101, 1));
-		cp.add(new Vector2D(101, 401));
-		cp.add(new Vector2D(501, 501));
-		cp.add(new Vector2D(1, 1));
-		cp.add(new Vector2D(101, 1));
-		cp.add(new Vector2D(101, 401));
-		cp.add(new Vector2D(501, 501));
-		cp.add(new Vector2D(1, 1));
-		cp.add(new Vector2D(101, 1));
-		cp.add(new Vector2D(101, 401));
-		cp.add(new Vector2D(501, 501));
-;
 
-		BezierPath bp = new BezierPath(cp, 100);
-		ArrayList<Vector2D> curve = bp.getPath();
-		bp.drawCurve(spriteBatch, curve);
 	}
 }

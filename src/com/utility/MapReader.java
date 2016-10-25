@@ -155,29 +155,74 @@ public class MapReader {
 		ArrayList<Vector2D> orderedPoints = getOrderedPathVectors(parsedMap);
 		ArrayList<Vector2D> pathPoints = new ArrayList<>();
 
-		Vector2D prevLocation = new Vector2D(0,0);
-		Vector2D prevPrevLocation = new Vector2D(0,0);
 		Vector2D viewOffset = new Vector2D(View.SCALE/2, View.SCALE/2);
-		pathPoints.add(Vector2D.add(orderedPoints.get(0), viewOffset));
-		for(Vector2D point : orderedPoints)
+		//TODO: Use entry dir to evaluate prevPoint
+		Vector2D entry = new Vector2D(0,0);
+		switch(entryDir)
 		{
-			point.mult(View.SCALE);
-			Vector2D dif = Vector2D.sub(prevPrevLocation, point);
-			if(dif.x != 0 && dif.y != 0)
-			{
-				//Add new points - half way between prevprev and prev, and half way between prev and current
-				Vector2D prevPrevToPrev = Vector2D.add(prevPrevLocation,Vector2D.sub(prevLocation, prevPrevLocation).div(2));
-				Vector2D prevToCurrent = Vector2D.add(prevLocation,Vector2D.sub(point, prevLocation).div(2));
-				pathPoints.add(Vector2D.add(prevPrevToPrev, viewOffset));
-				pathPoints.add(Vector2D.add(prevToCurrent, viewOffset));
-			}
-			prevPrevLocation = prevLocation;
-			prevLocation = point;
+		case 0:
+			entry = Vector2D.add(orderedPoints.get(0), new Vector2D(0, -1)); 
+			break;
+		case 1:
+			entry = Vector2D.add(orderedPoints.get(0), new Vector2D(-1, 0)); 
+			break;
+		case 2:
+			entry = Vector2D.add(orderedPoints.get(0), new Vector2D(0, 1)); 
+			break;
+		case 3:
+			entry = Vector2D.add(orderedPoints.get(0), new Vector2D(1, 0)); 
+			break;
+		}
+		entry = Vector2D.mult(entry, View.SCALE).add(viewOffset);
+		Vector2D exit = new Vector2D(0,0);
+		
+		for(int i = 0; i < orderedPoints.size() - 1; i++)
+		{
+			Vector2D point = orderedPoints.get(i);
+			exit = orderedPoints.get(i+1);
+			point = Vector2D.mult(point, View.SCALE).add(viewOffset);
+			exit = Vector2D.mult(exit, View.SCALE).add(viewOffset);
+			pathPoints.addAll(getTileControlPoints(entry, point, exit));
+			
+			entry = point;
 		}
 		
-		pathPoints.add(Vector2D.add(orderedPoints.get(orderedPoints.size()-1), viewOffset));
-
-		return pathPoints;
+		//TODO: Use exit direction
+		switch(exitDir)
+		{
+		case 0:
+			exit = Vector2D.add(orderedPoints.get(orderedPoints.size() - 1), new Vector2D(0, 1)); 
+			break;
+		case 1:
+			exit = Vector2D.add(orderedPoints.get(orderedPoints.size() - 1), new Vector2D(1, 0)); 
+			break;
+		case 2:
+			exit = Vector2D.add(orderedPoints.get(orderedPoints.size() - 1), new Vector2D(0, -1)); 
+			break;
+		case 3:
+			exit = Vector2D.add(orderedPoints.get(orderedPoints.size() - 1), new Vector2D(-1, 0)); 
+			break;
+		}
+		exit = Vector2D.mult(exit, View.SCALE).add(viewOffset);
+		Vector2D point = Vector2D.mult(orderedPoints.get(orderedPoints.size()-1), View.SCALE).add(viewOffset);
+		pathPoints.addAll(getTileControlPoints(entry, point, exit));
+		
+		BezierPath bp = new BezierPath(pathPoints, 10);
+		return bp.getPath();
+	}
+	
+	private ArrayList<Vector2D> getTileControlPoints(Vector2D a, Vector2D b, Vector2D c)
+	{
+		ArrayList<Vector2D> controlPoints = new ArrayList<>();	
+		Vector2D p0 = Vector2D.add(a,Vector2D.sub(b, a).div(2));
+		Vector2D p1 = Vector2D.add(p0, Vector2D.sub(b, p0).div(2));
+		Vector2D p3 = Vector2D.add(b, Vector2D.sub(c, b).div(2));
+		Vector2D p2 = Vector2D.add(b, Vector2D.sub(p3, b).div(2));
+		controlPoints.add(p0);
+		controlPoints.add(p1);
+		controlPoints.add(p2);
+		controlPoints.add(p3);
+		return controlPoints;
 	}
 
 	private ArrayList<Vector2D> getOrderedPathVectors(int[][] parsedMap) {

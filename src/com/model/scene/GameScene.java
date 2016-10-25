@@ -13,7 +13,7 @@ import com.visualisation.View;
 public class GameScene extends Scene {
 
 	Player player = new Player();
-	Map map;
+	public Map map;
 	private Squad<Unit> squad;
 
 	@Override

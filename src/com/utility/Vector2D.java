@@ -166,4 +166,9 @@ public class Vector2D {
 		return "(" + x + ", " + y + ")";
 	}
 
+	public static Vector2D div(Vector2D v, float i) {
+		Vector2D returnVec = new Vector2D(v.x / i, v.y / i);
+		return returnVec;
+	}
+
 }
